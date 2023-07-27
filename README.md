@@ -26,4 +26,4 @@ The app is basically a web application. Specifically, the tech stack used includ
   </ol>
 
 # O/S & Development Environment
-I am currently using a 64-bit Windows machine running Windows 10. I have also opted to use <a href="www.wampserver.com/en">Wampserver4</a>. A database with the same name as the project has been created on my local MYSQL Installation. Database Migrations & Table creation will be handled by <a href="https://codeigniter.com"><em>CodeIgniter 4</em></a>
+I am currently using a 64-bit Windows machine running Windows 10. I have also opted to use <a href="www.wampserver.com/en">Wampserver64</a>. A database with the same name as the project has been created on my local MYSQL Installation. Database Migrations & Table creation will be handled by <a href="https://codeigniter.com"><em>CodeIgniter 4</em></a>
