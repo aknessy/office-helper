@@ -27,12 +27,18 @@ class Home extends BaseController
      */
     protected $accounting;
 
+    /**
+     * Validation Service
+     */
+    protected $validation;
+
     public function __construct()
     {
         $this->helpers = ['breadcrumb'];
         $this->uri = new \CodeIgniter\HTTP\URI();
         $this->staff = new \App\Models\StaffModel();
         $this->accounting = new \App\Models\AccountingModel();
+        $this->validation = \Config\Services::validation();
     }
 
     public function index()
@@ -45,14 +51,24 @@ class Home extends BaseController
 
     public function manual()
     {
-        if($this->request->is('post')){
+        helper('form');
 
+        if($this->request->is('post'))
+        {
+            //var_dump($this->rules($this->request->getPost()));die;
+            $this->validation->setRuleGroup('manual_payslip');
+
+            if(! $this->validation->run()){
+                return redirect()->back()->withInput();
+            }else{
+
+            }
         }else{
-    $data['title'] = self::$page_title . 'Manul Generation';
-    $data['subview'] = 'home/manual';
-    $data['uri'] = $this->uri;
-    return view('layouts/main', $data);
-}
+            $data['title'] = self::$page_title . 'Manual Payslip Generation';
+            $data['subview'] = 'home/manual';
+            $data['uri'] = $this->uri;
+            return view('layouts/main', $data);
+        }
     }
 
     public function search(){
@@ -88,5 +104,25 @@ class Home extends BaseController
             }
             
         }
+    }
+
+    public function rules($target){
+        $array = [];
+
+        if(is_array($target)){
+            foreach($target as $key => $value){
+                $array[] =  [
+                    $key => [
+                        'rules' => 'required|trim|xss_clean',
+                        'errors' => [
+                            'required' => '{field} is required'
+                        ]
+                    ]
+                    
+                ];
+            }
+        }
+
+        return $array;
     }
 }

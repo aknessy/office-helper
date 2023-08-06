@@ -35,6 +35,7 @@ $routes->get('/home/advanced', 'Home::advanced');
 $routes->get('/home/manual', [\App\Controllers\Home::class, 'manual']);
 
 $routes->post('/home/fetch_ajax', [\App\Controllers\Home::class, 'search']);
+$routes->post('/home/manual', [\App\Controllers\Home::class, 'manual']);
 
 /*
  * --------------------------------------------------------------------

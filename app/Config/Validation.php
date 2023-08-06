@@ -36,9 +36,18 @@ class Validation extends BaseConfig
     public array $templates = [
         'list'   => 'CodeIgniter\Validation\Views\list',
         'single' => 'CodeIgniter\Validation\Views\single',
+        'custom_validation_template' => 'fragments/validation_errors',
     ];
 
     // --------------------------------------------------------------------
     // Rules
     // --------------------------------------------------------------------
+    public $manual_payslip = [
+      'file_no' => [
+          'rules' => 'required|trim|xss_clean',
+          'errors' => [
+            'required' => 'File No. is required'
+          ]
+        ],
+    ];
 }

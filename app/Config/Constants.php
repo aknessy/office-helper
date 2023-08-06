@@ -97,7 +97,6 @@ define('EVENT_PRIORITY_HIGH', 10);
  * Symbol for currencies
  */
 define('CURRENCY_NAIRA', '₦');//Alternatively you can use the HTML symbol - &#8358; if that does not work
-
 define('MONTH_WITH_NAMES', 
     [
         1 => 'JANUARY',
