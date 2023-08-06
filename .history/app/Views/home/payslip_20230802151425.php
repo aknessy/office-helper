@@ -1,0 +1,1 @@
+<div class="flex flex-colitems-center justify-center text-gray-700
