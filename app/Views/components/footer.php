@@ -10,7 +10,8 @@
         <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script src="https://unpkg.com/feather-icons"></script>
-        <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+        <script src="https://unpkg.com/@material-tailwind/html@latest/scripts/dismissible.js"></script>
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 
         <script>
@@ -23,6 +24,8 @@
                 $(".datepicker-widget").flatpickr();
                 $(".datepicker-widget-ym").flatpickr(options);
             });
+
+            $('#alertDismiss').click(function(e){e.preventDefault()})
 
             /**
              * All elements that have a data-feather attribute will be replaced with SVG markup corresponding to their data-feather attribute value. 
@@ -85,5 +88,34 @@
                 document.body.innerHTML = originalContents;
             }
         </script>
+
+    <?php 
+        if(session()->getFlashdata('flashError')){ ?>
+            <script>
+                swal({
+                    title: "Error",
+                    text: "<?=session()->getFlashdata('flashError')?>",
+                    icon: "error",
+                });
+            </script>
+        <?php }
+            if(session()->getFlashdata('flashSuccess')){?>
+            <script>
+                swal({
+                    title: "Success",
+                    text: "<?=session()->getFlashdata('flashSuccess')?>",
+                    icon: "success",
+                });
+            </script>
+        <?php }
+            if(session()->getFlashdata('flashWarning')){?>
+            <script>
+                swal({
+                    title: "Warning",
+                    text: "<?=session()->getFlashdata('flashWarning')?>",
+                    icon: "warning",
+                });
+            </script>
+        <?php }?>
     </body>
 </html>

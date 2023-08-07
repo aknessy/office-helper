@@ -16,9 +16,9 @@
     <?php 
     } else {
     ?>
-    <div class="flex flex-row flex-wrap items-center justify-end p-2 mt-2 w-full">
+    <div class="flex flex-row flex-wrap items-center justify-center p-2 mt-2 w-full">
         <div></div>
-        <button onclick="printDiv('printArea')" class="inline-flex bg-blue-300 border border-blue-400 text-white text-2xl space-x-2">
+        <button onclick="printDiv('printArea')" class="inline-flex items-center bg-blue-300 border border-blue-400 text-white text-sm space-x-2 px-3 py-1 shadow-lg ring ring-3 ring-dark rounded-md">
             <i data-feather="printer"></i>
             <span>Print</span>
         </button>
@@ -204,22 +204,28 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="3" class="border border-gray-500 p-2">
+                <td colspan="2" class="border border-gray-500 p-2">
                     <div class="w-full flex flex-wrap items-center justify-between font-semibold font-mono">
-                        <div class="mr-6">Total Earnings = </div>
-                        <div>0.00</div>
+                        <div class="mr-6">Total Earnings</div>
+                        <div>= <?=CURRENCY_NAIRA . 0.00?></div>
                     </div>
                 </td>
-                <td colspan="3" class="border border-gray-500 p-2">
+                <td colspan="2" class="border border-gray-500 p-2">
                     <div class="w-full flex flex-wrap items-center justify-between font-semibold font-mono">
-                        <div class="mr-6">Total Deductions = </div>
-                        <div>0.00</div>
+                        <div class="mr-6">Total Deductions</div>
+                        <div>= <?=CURRENCY_NAIRA . 0.00?></div>
+                    </div>
+                </td>
+                <td colspan="2" class="border border-gray-500 p-2">
+                    <div class="w-full flex flex-wrap items-center justify-between font-semibold font-mono">
+                        <div class="mr-6">Net Pay</div>
+                        <div>= <?=CURRENCY_NAIRA . 0.00?></div>
                     </div>
                 </td>
             </tr>
             <tr>
                 <td colspan="6" class="text-center p-2 font-bold text-2xl font-mono">
-                    <p class="text-dark">Net Pay = 0.00</p>
+                    <p class="text-dark">Total Emolument =<?=CURRENCY_NAIRA . 0.00?></p>
                 </td>
             </tr>
             <tr>
@@ -231,9 +237,9 @@
             <span><?=$_SERVER['HTTP_REFERER']?></span>
         </p>
     </div>
-    <div class="flex flex-row flex-wrap items-center justify-end p-2 mt-2 w-full">
+    <div class="flex flex-row flex-wrap items-center justify-center p-2 mt-2 w-full">
         <div></div>
-        <button onclick="printDiv('printArea')" class="inline-flex bg-blue-300 border border-blue-400 text-white text-2xl space-x-2">
+        <button onclick="printDiv('printArea')" class="inline-flex items-center bg-blue-300 border border-blue-400 text-white text-sm space-x-2 px-3 py-1 shadow-lg ring ring-3 ring-dark rounded-md">
             <i data-feather="printer"></i>
             <span>Print</span>
         </button>

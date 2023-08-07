@@ -55,13 +55,98 @@ class Home extends BaseController
 
         if($this->request->is('post'))
         {
-            //var_dump($this->rules($this->request->getPost()));die;
-            $this->validation->setRuleGroup('manual_payslip');
-
-            if(! $this->validation->run()){
+            $posts = $this->request->getPost();
+            /**
+             * Check that the submitted form has validly submitted values.
+             * The `manual_payslip` is an array that contains the rules defined in
+             * \Config\Validation 
+             */
+            if(! $this->validation->run($posts, 'manual_payslip')){
                 return redirect()->back()->withInput();
             }else{
+                $file_no = $this->request->getPost('file_no');
+                $is_staff_exists = $this->staff->where('file_no', $file_no)->findAll();
 
+                if(empty($is_staff_exists))
+                    session()->setFlashdata('flashError', "Staff with file number: {$file_no} does not exist!");
+                    
+                $first_name = $this->request->getPost('firstname');
+                $middle_name = $this->request->getPost('middlename');
+                $last_name = $this->request->getPost('lastname');
+                
+                $gross = $this->request->getPost('basic');
+
+                /**
+                 * Earnings
+                 */
+                $transport = (float)$this->request->getPost('transport');
+                $electoral = (float)$this->request->getPost('electoral');
+                $responsibility = (float)$this->request->getPost('responsibility');
+                $entertainment = (float)$this->request->getPost('entertainment');
+                $drivers_allowance = (float)$this->request->getPost('driver_allowance');
+                $meal = (float)$this->request->getPost('meal');
+                $utility = (float)$this->request->getPost('utility');
+                $overtime = (float)$this->request->getPost('overtime');
+                $housing = (float)$this->request->getPost('housing');
+
+                $total_earnings = ($transport + $electoral + $responsibility + $entertainment + $drivers_allowance + $meal + $utility + $overtime + $housing);
+
+                /**
+                 * Deductions
+                 */
+                $cps = (float)$this->request->getPost('cps');
+                $tax = (float)$this->request->getPost('tax');
+                $co_operative = (float)$this->request->getPost('co_operative');
+                $co_operative_dues = (float)$this->request->getPost('co_operative_dues');
+                $co_operative_loan = (float)$this->request->getPost('co_operative_loan');
+                $nhf = (float)$this->request->getPost('nhf');
+                $welfare_dues = (float)$this->request->getPost('welfare_dues');
+                $misc = NULL !== $this->request->getPost('misc') ? (float)$this->request->getPost('misc') : 0.0;
+
+                $total_deduction = ($cps + $tax + $co_operative + $co_operative_dues + $co_operative_loan + $nhf + $welfare_dues + $misc);
+
+                $records = [
+                    'file_no' => $file_no,
+                    'staff_name' => ($first_name . ' ' . $middle_name . ' ' . $last_name),
+                    'pay_point' => $this->request->getPost('paypoint'),
+                    'month' => $this->request->getPost('month'),
+                    'year' => $this->request->getPost('year'),
+                    'gross' => $gross,
+                    'transport' => $transport,
+                    'electoral' => $electoral,
+                    'responsibility' => $responsibility,
+                    'entertainment' => $entertainment,
+                    'driver_allowance' => $drivers_allowance,
+                    'meal' => $meal,
+                    'utility' => $utility,
+                    'overtime' => $overtime,
+                    'cps' => $cps,
+                    'tax' => $tax,
+                    'housing' => $housing,
+                    'co_operative' => $co_operative,
+                    'co_operative_dues' => $co_operative_dues,
+                    'co_operative_loan' => $co_operative_loan,
+                    'nhf' => $nhf,
+                    'welfare_dues' => $welfare_dues,
+                    'misc' => $misc,
+                    'misc_desc' => NULL !== $this->request->getPost('misc_desc') ? $this->request->getPost('misc_desc') : '',
+                ];
+
+                $net_pay = ($gross - $total_deduction);
+                $total_emolument = ($net_pay + $total_earnings);
+
+                $records['total_earnings'] = $total_earnings;
+                $records['total_deduction'] = $total_deduction;
+                $records['total_emolument'] = $total_emolument;
+                $records['net_pay'] = $net_pay;
+
+                $data['subview'] = 'home/manual_payslip';
+                $data['uri'] = $this->uri; 
+                $data['records'] = $records;
+                $data['title'] = self::$page_title . 'Manual Payslip Generation';
+                
+                session()->setFlashdata('flashSuccess', 'Pay slip generated for '. ucfirst((string)$first_name));
+                return view('layouts/main', $data);
             }
         }else{
             $data['title'] = self::$page_title . 'Manual Payslip Generation';
