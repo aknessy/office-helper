@@ -47,18 +47,10 @@
                                         <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
                                     </svg>
                                 </button>
-                                <div class="hidden peer-focus:flex items-center absolute tight-0 z-10 mt-2 w-52 origin-top-right rounded-md bg-white drop-shadow-lg ring-2 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                                <div class="hidden peer-focus:flex items-center absolute tight-0 z-10 mt-1 w-52 origin-top-right rounded-md bg-white drop-shadow-lg ring-2 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
                                     <div class="py-1 w-full" role="none">
-                                        <?php if($uri->getSegments()){
-                                            if($this->request->uri->getSegment(2) == 'manual'){ ?>
-                                                <a href="<?=base_url('home/manual')?>" class="border-s-2 border-l-blue-200 text-gray-400 hover:text-gray-600 hover:bg-blue-50 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Generate Manually</a>
-                                        <?php }elseif(NULL == $this->request->uri->segment(1) || $this->request->uri->segment(1) == 'home'){?>
-                                            <a href="<?=base_url()?>" class="border-s-2 border-l-blue-200 text-gray-400 hover:text-gray-600 hover:bg-blue-50 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">Automated Payslip</a>
-                                        <?php } 
-                                        }else{ ?>
-                                            <a href="<?=base_url('home/manual')?>" class="text-gray-400 hover:text-gray-600 hover:bg-blue-50 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Generate Manually</a>  
-                                            <a href="<?=base_url()?>" class="text-gray-400 hover:text-gray-600 hover:bg-blue-50 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">Automated Payslip</a>
-                                        <?php }?>
+                                        <a href="<?=base_url('home/manual')?>" class="text-gray-400 hover:text-gray-600 hover:bg-blue-50 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-0">Generate Manually</a>  
+                                        <a href="<?=base_url()?>" class="text-gray-400 hover:text-gray-600 hover:bg-blue-50 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-1">Automated Payslip</a>
                                         <!-- <a href="#" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-2">License</a>
                                         <form method="POST" action="#" role="none">
                                             <button type="submit" class="text-gray-700 block w-full px-4 py-2 text-left text-sm" role="menuitem" tabindex="-1" id="menu-item-3">Sign out</button>
@@ -75,7 +67,7 @@
         <?php
         if(!session()->getFlashdata('error')){ ?>
         <div class="flex flex-col w-full mb-6 mt-0 space-x-3">
-            <div class="bg-blue-200 flex space-x-3 mb-4 items-center justify-start shadow-sm">
+            <div class="bg-gradient-to-br from-blue-200 to-blue-400 rounded-sm flex space-x-2 mb-4 items-center justify-start shadow-md px-2">
                 <span class="h-full p-4 items-center justify-center font-sans text-2xl text-gray-700">
                     <i data-feather="alert-octagon"></i>
                 </span>

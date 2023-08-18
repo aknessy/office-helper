@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use Config\Modules;
+
 class Home extends BaseController
 {
     /**
@@ -19,13 +21,25 @@ class Home extends BaseController
      * Mirrors the created StaffModel Class
      * @Model
      */
-    protected $staff;
+    protected $staff_model;
 
     /**
      * Mirrors the created Accounting Model Class
      * @Model
      */
-    protected $accounting;
+    protected $accounting_model;
+
+    /**
+     * Mirrors the Allowances Model Class
+     * @Model
+     */
+    protected $allowances_model;
+
+    /**
+     * Mirrors the Deduction Model Class
+     * @Model
+     */
+    protected $deductions_model;
 
     /**
      * Validation Service
@@ -36,8 +50,10 @@ class Home extends BaseController
     {
         $this->helpers = ['breadcrumb'];
         $this->uri = new \CodeIgniter\HTTP\URI();
-        $this->staff = new \App\Models\StaffModel();
-        $this->accounting = new \App\Models\AccountingModel();
+        $this->staff_model = new \App\Models\StaffModel();
+        $this->accounting_model = new \App\Models\AccountingModel();
+        $this->allowances_model = new \App\Models\AllowanceModel();
+        $this->deductions_model = new \App\Models\DeductionModel();
         $this->validation = \Config\Services::validation();
     }
 
@@ -45,7 +61,6 @@ class Home extends BaseController
     {
         $data['title'] = self::$page_title . 'Home';
         $data['subview'] = 'home/index';
-        $data['uri'] = $this->uri;
         return view('layouts/main', $data, ['saveData' => false]);
     }
 
@@ -141,7 +156,6 @@ class Home extends BaseController
                 $records['net_pay'] = $net_pay;
 
                 $data['subview'] = 'home/manual_payslip';
-                $data['uri'] = $this->uri; 
                 $data['records'] = $records;
                 $data['title'] = self::$page_title . 'Manual Payslip Generation';
                 
@@ -151,7 +165,6 @@ class Home extends BaseController
         }else{
             $data['title'] = self::$page_title . 'Manual Payslip Generation';
             $data['subview'] = 'home/manual';
-            $data['uri'] = $this->uri;
             return view('layouts/main', $data);
         }
     }
@@ -159,30 +172,99 @@ class Home extends BaseController
     public function search(){
         
         helper('form');
-
-        $search_term = $this->request->getPost('term');
         
         if(!$this->request->is('post')){
             return $this->response->setStatusCode(405)->setBody('Method Not Allowed');
         }
         
-        if(isset($search_term))
+        $search_term = $this->request->getPost('term');
+        $date_picked = $this->request->getPost('date');
+
+        if(isset($search_term, $date_picked))
         {
+            $total_deductions = 0;
+            $total_allowances = 0;
+            $gross_to_date = 0;
+            $tax_to_date = 0;
+
             $search_term = strtoupper(esc($search_term));
+            $date_year = explode('-', esc($date_picked))[0];
+            $date_month = explode('-', esc($date_picked))[1];
             
-            $first_query = $this->staff->where('file_no', $search_term)->findAll();
-            $second_query = $this->staff->where('staff_name', $search_term)->findAll();
+            $first_query = $this->staff_model->where('file_no', $search_term)->findAll();
             
             if($first_query)
             {
-                $id = $first_query[0]['id'];
-                $account = $this->accounting->where('nominal_roll_id', $id)->findAll();
+                //var_dump($first_query);die;
+                $id = $first_query[0]['id'];//echo $id;die;
+                $account = $this->accounting_model->where('nominal_roll_id', $id)->findAll();
+                $deductions = $this->deductions_model->where('nominal_roll_id', $id)->findAll();
+                $allowances = $this->allowances_model->where('nominal_roll_id', $id)->findAll();
+                
+               $total_allowances = $this->allowances_model->total_allowances($id, $date_year);
+               $total_deductions = $this->deductions_model->total_deductions($id, $date_year);
+                /**
+                * Without wrapping the following in if..else statements, we'll get "<!-- X-DEBUG is not a valid JSON"... error
+                * on the client due to JSON.parse being unable to parse the response.
+                 */
+                if(NULL == $account[0]['bank_code'] || $account[0]['bank_code'] == 0) 
+                {
+                    /**
+                     * The status code helps to determine what kind of redirect that should be handled by the client
+                     */
+                    return view('fragments/redirect',
+                            [
+                                'message' => 'No account records found',
+                                'status' => 1,
+                                'staff_id' => $account[0]['id']
+                        ]
+                    );
+                }
 
+                if(NULL == $deductions[0]['tax'] || $deductions[0]['tax'] == 0)
+                {
+                    /**
+                     * The status code helps to determine what kind of redirect that should be handled by the client
+                     */
+                    return view('fragments/redirect', 
+                        
+                                [
+                                    'message' => 'No deduction records found',
+                                    'status' => 2,
+                                    'staff_id' => $account[0]['id']
+                                ]
+                            );
+                    
+                }
+
+                if(NULL == $allowances[0]['hazard'] || $allowances[0]['hazard'] == 0){
+                    /**
+                     * The status code helps to determine what kind of redirect that should be handled by the client
+                     */
+                    return view('fragments/redirect', 
+                            [
+                                'message' => 'No allowance records found',
+                                'status' => 3,
+                                'staff_id' => $account[0]['id']
+                            ]
+                        );     
+                }
+
+                $net_pay = (float)($first_query[0]['gross'] - $total_deductions);
+                $total_emolument = (float)($net_pay + $total_allowances);
+                    
                 $data['result'] = $first_query[0];
                 $data['account_records'] = $account[0];
+                $data['deduction_records'] = $deductions[0];
+                $data['allowance_records'] = $allowances[0];
+                $data['total_allowance'] = $total_allowances;
+                $data['total_deduction'] = $total_deductions;
+
+                $data['netpay'] = $net_pay;
+                $data['emolument'] = $total_emolument;
+                $data['payslip_date'] = $date_picked;
+
                 return view('home/payslip', $data);
-            }elseif($second_query){
-                return $second_query;
             }else{
                 $data['message'] = 'Your search term returned 0 results!';
                 return view('fragments/no-record', $data);

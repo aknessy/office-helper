@@ -54,9 +54,9 @@
                     </td>
                 </tr>
                 <tr class="pt-5 pb-5 border border-gray-600">
-                    <td colspan="2" class="border border-gray-600 font-semibold p-2">EARNINGS</td>
-                    <td colspan="2" class="border border-gray-600 font-semibold p-2">DEDUCTIONS</td>
-                    <td colspan="2" class="border border-gray-600 font-semibold p-2">TAX INFORMATION</td>
+                    <td colspan="2" class="border font-semibold p-2 text-white" style="background-color:#13171D">EARNINGS</td>
+                    <td colspan="2" class="border font-semibold p-2 text-white" style="background-color:#13171D">DEDUCTIONS</td>
+                    <td colspan="2" class="border font-semibold p-2 text-white bg-gray-800" style="background-color:#13171D">TAX INFORMATION</td>
                 </tr>
                 <tr>
                     <td colspan="2" class="border border-gray-600">

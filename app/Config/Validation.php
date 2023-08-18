@@ -116,18 +116,115 @@ class Validation extends BaseConfig
             ]
         ],
         'nhf' => [
-            'rules' => 'required|trim|integer',
+            'rules' => 'required|integer',
             'errors' => [
                 'required' => 'National Housing Fund wasn\'t found',
                 'integer' => 'NHF must be an integer or float'
             ]
         ],
         'welfare_dues' => [
-            'rules' => 'required|trim|integer',
+            'rules' => 'required|integer',
             'errors' => [
                 'required' => 'Welfare Dues is missing as well',
                 'integer' => 'Welfare Dues needs to be an integer'
             ]
         ]
     ];
+
+    /**
+     * The following rules are used in by add method of th Deduction
+     * Constroller to create/update a staff's deductions
+     * 
+     * @array
+     */
+    public array $add_deduction = [
+        'date' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Date field is required'
+            ]
+        ],
+        'welfare' => [
+            'rules' => 'trim|required|integer',
+            'errors' => [
+                'required' => 'Welfare Deduction is required',
+                'integer' => 'Welfare must be an integer/float'
+            ]
+        ],
+        'co_operative' => [
+            'rules' => 'trim|integer',
+            'errors' => [
+                'integer' => 'Enter a valid value for Co-operative savings'
+            ]
+        ],
+        'co_operative_dues' => [
+            'rules' => 'trim|integer',
+            'errors' => [
+                'integer' => 'Co-operative dues must be a valid integer/float'
+            ]
+        ],
+        'co_operative_loan' => [
+            'rules' => 'trim|decimal',
+            'errors' => [
+                'decimal' => 'Co-operative loan figure is not valid'
+            ]
+        ],
+        'nhf' => [
+            'rules' => 'trim|required|decimal',
+            'errors' => [
+                'required' => 'NHF is required',
+                'decimal' => 'NHF must be a valid integer/float'
+            ]
+        ],
+        'cps' => [
+            'rules' => 'trim|required|decimal',
+            'errors' => [
+                'required' => 'CPS is mandatory',
+                'decimal' => 'A valid figure for CPS is required'
+            ]
+        ],
+        'tax' => [
+            'rules' => 'trim|required|decimal',
+            'errors' => [
+                'required' => 'Tax field cannot be blank',
+                'decimal' => 'Tax field is not a valid integer/float value'
+            ]
+        ]
+    ];
+
+    /**
+     * The following rules are used by the add method of the Allowances
+     * Constroller to create/update a staff's allowances
+     * 
+     * @array
+     */
+    public $allowance_rules = [
+        'hazard' => [
+            'rules' => 'trim|required|decimal',
+            'errors' > [
+                'required' => 'Electoral Hazard is a mandatory field',
+                'decimal' => 'An invalid value was encountered'
+            ]
+        ],
+        'responsibility' => [
+            'rules' => 'trim|decimal',
+            'errors' => [
+                'decimal' => 'Enter a valid figure for responsibility allowance'
+            ]
+        ],
+        'entertainment' => [
+            'rules' => 'trim|decimal',
+            'errors' => [
+                'decimal' => 'An integer/decimal value was expected for entertainment'
+            ]
+        ],
+        'drivers' => [
+            'rules' => 'trim|decimal',
+            'errors' => [
+                'decimal' => 'An integer/decimal value was expected for drivers allowance'
+            ]
+        ],
+    ];
+
+
 }

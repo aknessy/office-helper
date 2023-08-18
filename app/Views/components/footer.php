@@ -1,6 +1,6 @@
         
                 <div class="flex w-full">
-                    <div class="w-full flex items-center justify-center mt-5 p-4">
+                    <div class="w-full flex items-center justify-center p-4">
                         <p class="font-sans text-xs text-slate-400">Created by &copy;aknessy <?=date('Y')?></p>
                     </div>
                 </div>
@@ -12,6 +12,8 @@
         <script src="https://unpkg.com/feather-icons"></script>
         <script src="https://unpkg.com/@material-tailwind/html@latest/scripts/dismissible.js"></script>
         <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
 
         <script>
@@ -39,12 +41,34 @@
             $(document).ready(function(){
                 var targetEl = $('#searchQuery')
                 var submitBtn = $('#submitQuery')
+                var dateWidget = $('#paySlipDate')
 
                 var noResultContainer = $('#containerSearchIllustration');
                 var resultContainer = $('#recordsContainer')
                 
+                $(targetEl).on('change', function(){
+                    var query_string = $(this).val();
+
+
+                    if(query_string.length >= 5 && (dateWidget).val() != '')
+                        $(submitBtn).removeClass('pointer-events-none')
+                    else
+                        alert("Please fill the file number field!")
+                })
+
+                $(dateWidget).on('change', function(){
+                    var date_string = $(this).val();
+
+                    if($(targetEl).val().length >= 5  && date_string != '')
+                        $(submitBtn).removeClass('pointer-events-none')
+                    else
+                        alert("You forgot the date field!")
+                })
+                
+
                 $(submitBtn).on('click', function(){
                     var searchTerms = $(targetEl).val()
+                    var selectedDate = $(dateWidget).val()
 
                     if(searchTerms !== '')
                     {
@@ -55,9 +79,9 @@
                             {
                                 url : '<?=base_url('/home/fetch_ajax')?>',
                                 type : 'post',
-                                dataType: 'html',
-                                data : {term : searchTerms, <?=csrf_token()?> : '<?=csrf_hash()?>'},
-                                success : function(response)
+                                dataType : 'html',
+                                data : {term : searchTerms, <?=csrf_token()?> : '<?=csrf_hash()?>', date : selectedDate},
+                                success : (response) =>
                                 {
                                     $(resultContainer).empty().html(response)
                                 },
@@ -74,6 +98,15 @@
                     }
                 })
             })
+
+            function isJson(str) {
+                try {
+                    JSON.parse(str);
+                } catch (e) {
+                    return false;
+                }
+                return true;
+            }
         </script>
 
         <script>

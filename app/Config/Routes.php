@@ -33,9 +33,14 @@ $routes->get('/', 'Home::index');
 $routes->get('/home', 'Home::index');
 $routes->get('/home/advanced', 'Home::advanced');
 $routes->get('/home/manual', [\App\Controllers\Home::class, 'manual']);
+$routes->get('/deductions/add/(:num)', [\App\Controllers\Deductions::class, 'add/$1']);
+$routes->get('/accounts/add/(:num)', [\App\Controllers\Accounts::class, 'add/$1']);
+$routes->get('/allowances/add/(:num)', [\App\Controllers\Allowances::class, 'add/$1']);
 
 $routes->post('/home/fetch_ajax', [\App\Controllers\Home::class, 'search']);
 $routes->post('/home/manual', [\App\Controllers\Home::class, 'manual']);
+$routes->post('deductions/add/(:num)', [\App\Controllers\Deductions::class, 'add']);
+$routes->post('allowances/add/(:num)', [\App\Controllers\Allowances::class, 'add']);
 
 /*
  * --------------------------------------------------------------------

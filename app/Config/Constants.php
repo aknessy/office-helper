@@ -113,3 +113,10 @@ define('MONTH_WITH_NAMES',
         12 => 'DECEMBER'
     ]
 );
+define('STATUS_CODES_INTERNAL', 
+    [
+        1 => 'No account records found',
+        2 => 'No deduction records found',
+        3 => 'No allowance records found'
+    ]
+);
