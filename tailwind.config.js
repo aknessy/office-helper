@@ -5,6 +5,7 @@ module.exports = {
     './app/Views/errors/**/*.{html,js,php}',
     './app/Views/home/**/*.{html,js,php}',
     './app/Views/fragments/*.{html,php}',
+    './app/Views/deduction/*.{html,php}',
     './app/Views/*.{html,js,php}',
     './app/*.html'
   ],
