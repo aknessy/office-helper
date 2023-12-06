@@ -19,7 +19,7 @@ $routes->set404Override();
 // where controller filters or CSRF protection are bypassed.
 // If you don't want to define all routes, please use the Auto Routing (Improved).
 // Set `$autoRoutesImproved` to true in `app/Config/Feature.php` and set the following to true.
-// $routes->setAutoRoute(false);
+//$routes->setAutoRoute(false);
 
 /*
  * --------------------------------------------------------------------
@@ -32,6 +32,7 @@ $routes->set404Override();
 $routes->get('/', 'Home::index');
 $routes->get('/home', 'Home::index');
 $routes->get('/home/advanced', 'Home::advanced');
+$routes->get('/home/payslip/(:any)/(:any)', [\App\Controllers\Home::class, 'payslip/$1/$2']);
 $routes->get('/home/manual', [\App\Controllers\Home::class, 'manual']);
 $routes->get('/deductions/add/(:num)', [\App\Controllers\Deductions::class, 'add/$1']);
 $routes->get('/accounts/add/(:num)', [\App\Controllers\Accounts::class, 'add/$1']);
@@ -41,7 +42,7 @@ $routes->post('/home/fetch_ajax', [\App\Controllers\Home::class, 'search']);
 $routes->post('/home/manual', [\App\Controllers\Home::class, 'manual']);
 $routes->post('deductions/add/(:num)', [\App\Controllers\Deductions::class, 'add']);
 $routes->post('allowances/add/(:num)', [\App\Controllers\Allowances::class, 'add']);
-
+$routes->post('/accounts/add/(:num)', [\App\Controllers\Accounts::class, 'add']);
 /*
  * --------------------------------------------------------------------
  * Additional Routing

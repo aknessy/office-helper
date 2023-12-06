@@ -37,4 +37,8 @@ class Staff extends BaseController
 
         $data['title'] = self::$page_title . 'Staff Verification';
     }
+
+    public function list(){
+        $data['title'] = self::$page_title . 'Staff List';
+    }
 }

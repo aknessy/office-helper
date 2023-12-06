@@ -59,7 +59,7 @@
                 $(dateWidget).on('change', function(){
                     var date_string = $(this).val();
 
-                    if($(targetEl).val().length >= 5  && date_string != '')
+                    if($(targetEl).val().length >= 4  && date_string != '')
                         $(submitBtn).removeClass('pointer-events-none')
                     else
                         alert("You forgot the date field!")
@@ -70,43 +70,10 @@
                     var searchTerms = $(targetEl).val()
                     var selectedDate = $(dateWidget).val()
 
-                    if(searchTerms !== '')
-                    {
-                        $(noResultContainer).removeClass('flex').addClass('hidden')
-                        $(resultContainer).addClass('flex').removeClass('hidden')
-                        
-                        $.ajax(
-                            {
-                                url : '<?=base_url('/home/fetch_ajax')?>',
-                                type : 'post',
-                                dataType : 'html',
-                                data : {term : searchTerms, <?=csrf_token()?> : '<?=csrf_hash()?>', date : selectedDate},
-                                success : (response) =>
-                                {
-                                    $(resultContainer).empty().html(response)
-                                },
-                                error : function(err){
-                                    $(noResultContainer).removeClass('hidden').addClass('flex')
-                                    $(resultContainer).addClass('hidden').removeClass('flex')
-                                }
-                            }
-                        )
-                    
-                    }else{
-                        $(noResultContainer).removeClass('hidden').addClass('flex')
-                        $(resultContainer).addClass('hidden').removeClass('flex')
-                    }
+                    if(searchTerms !== '' && selectedDate !== '')
+                        window.location.href = "<?=base_url('home/payslip/')?>" + searchTerms + '/' + selectedDate
                 })
             })
-
-            function isJson(str) {
-                try {
-                    JSON.parse(str);
-                } catch (e) {
-                    return false;
-                }
-                return true;
-            }
         </script>
 
         <script>

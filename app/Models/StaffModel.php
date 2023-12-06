@@ -8,7 +8,7 @@ class StaffModel extends Model
 {
     protected $table = 'staff_nominal_roll';
     protected $primaryKey = 'id';
-    protected $returnType = 'array';
+    protected $returnType = 'object';
     protected $dateFormat = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
@@ -32,4 +32,16 @@ class StaffModel extends Model
         'date_of_retirement',
         'mode'
     ];
+
+    /**
+     * Look for staff with using name
+     * 
+     * @param string $name
+     * @return Object
+     */
+    public function findByName(string $name)
+    {
+        $query = $this->builder->like('staff_name', $name)->get();
+        return $query->getResult() ? $query->getResult() : NULL;
+    }
 }

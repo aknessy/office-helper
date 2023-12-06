@@ -1,13 +1,10 @@
-/** @type {import('tailwindcss').Config} */
+
 module.exports = {
+  daisyui: {
+    themes: ["light", "dark", "cupcake", "corporate", "winter"],
+  },
   content: [
-    './app/Views/components/**/*.{html,js,php}',
-    './app/Views/errors/**/*.{html,js,php}',
-    './app/Views/home/**/*.{html,js,php}',
-    './app/Views/fragments/*.{html,php}',
-    './app/Views/deduction/*.{html,php}',
-    './app/Views/*.{html,js,php}',
-    './app/*.html'
+    './app/Views/**/*.{html,js,php}',
   ],
   theme: {
     extend: {
@@ -16,6 +13,9 @@ module.exports = {
       }
     },
   },
-  plugins: [],
+  plugins: [
+    //require("@tailwindcss/typography"),
+    require('daisyui'),
+  ],
 }
 

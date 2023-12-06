@@ -17,14 +17,25 @@ class AccountingModel extends Model
     protected $allowedFields = [
         'nominal_roll_id',
         'bank_name',
-        'acct_num',
+        'account_num',
         'bank_code',
-        'gross_salary',
-        'welfare',
-        'co_operative',
-        'co_operative_dues',
-        'loan',
-        'nhf',
-        'cps'
+        'sort_code',
     ];
+
+    /**
+     * Get all distinct Bank names and the codes from db
+     * 
+     * @param array $data
+     * @param array $where
+     * 
+     * @return bool
+     */
+    public function bank_names_codes()
+    {
+        $query = $this->builder->select('bank_name, bank_code')
+                ->groupBy('bank_code')
+                ->get();
+
+        return $query->getResult();
+    }
 }

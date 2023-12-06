@@ -74,16 +74,15 @@ class Deductions extends BaseController
                     'nhf' => (NULL == $this->request->getPost('nhf') ? NULL : $this->request->getPost('nhf')),
                     'tax' => (NULL == $this->request->getPost('tax') ? NULL : $this->request->getPost('tax')),
                     'cps' => (NULL == $this->request->getPost('cps') ? NULL : $this->request->getPost('cps')),
-                    'year' => $date
+                    'date' => $date
                 ];
 
-                if($this->deduction->update($id, $update_array)){
+                if($this->deduction->update($id, $update_array))
                     session()->setFlashdata('flashSuccess', 'Deductions for staff with ID: `' . $id . '` has been saved!');
-                        return redirect('deductions/add/' . $id);
-                }else{
+                else
                     session()->setFlashdata('flashError', 'Deductions for staff with ID: `' . $id . '` was not saved!');
-                        return redirect('deductions/add/' . $id);
-                }
+                    
+                return redirect()->back();    
             }
         }else{
             $saved_deductions = $this->deduction->find($id);

@@ -67,24 +67,21 @@ class Allowances extends BaseController
                 return redirect()->back()->withInput();
             }else{
                 $date = (string)$this->request->getPost('year');
-                $year = explode('-', $date)[0];
 
                 $update_array = [
-                    'hazard' => (NULL == $this->request->getPost('hazard') ? NULL : $this->request->getPost('hazard')),
-                    'responsibility' => (NULL == $this->request->getPost('responsibility') ? NULL : $this->request->getPost('responsibility')),
-                    'entertainment' => (NULL == $this->request->getPost('entertainment') ? NULL : $this->request->getPost('entertainment')),
-                    'drivers' => (NULL == $this->request->getPost('drivers') ? NULL : $this->request->getPost('drivers')),
-                    'year' => $year
+                    'hazard' => (NULL == $this->request->getPost('hazard') ? 0.0 : floatval($this->request->getPost('hazard'))),
+                    'responsibility' => (NULL == $this->request->getPost('responsibility') ? 0.0 : floatval($this->request->getPost('responsibility'))),
+                    'entertainment' => (NULL == $this->request->getPost('entertainment') ? 0.0 : floatval($this->request->getPost('entertainment'))),
+                    'drivers' => (NULL == $this->request->getPost('drivers') ? 0.0 : floatval($this->request->getPost('drivers'))),
+                    'date' => $date
                 ];
 
-                if($this->allowance->update($id, $update_array)){
+                if($this->allowance->update($id, $update_array))
                     session()->setFlashdata('flashSuccess', 'Allowances for staff with ID: `' . $id . '` have been saved!');
-                        return redirect('/allowances/add/' . $id);
-                }else{
+                else
                     session()->setFlashdata('flashError', 'Allowances for staff with ID: `' . $id . '` were not saved!');
-                    return redirect('/allowances/add/' . $id);
-                }
-
+                
+                return redirect()->back();
             }
         }else{
             $saved_allowances = $this->allowance->find($id);

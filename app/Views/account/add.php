@@ -33,7 +33,7 @@
     <?=view('components/submenu', ['uri' => $uri])?>
 
     <div id="mainArea" class="flex flex-col w-full bg-white border border-gray-100 rounded-lg shadow-md p-3">
-        <?php if(validation_errors()){?>
+        <?php if($validation->getErrors()){?>
         <div class="mb-3 w-full">
             <?=validation_list_errors('custom_validation_template') ?>
         </div>
@@ -46,12 +46,27 @@
             </div>
         <?php }?>
 
-        <?=form_open('accounts/add/' . $uri->getSegment(3), ['method' => 'post', 'class'=>'p-2 w-full'])?>
+        <?=form_open('accounts/add/' . $uri->getSegment(3), ['method' => 'post', 'class'=>'p-2 w-full mt-4'])?>
 
         <div class="flex flex-wrap mb-5">
             <div class="w-full md:mb-0 pr-3">
                 <div class="relative h-10 w-full">
-                    <input class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-gray-50 px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 text-gray-400 focus:border-blue-100 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 focus:bg-white" name="welfare" type="text" value="<?=$account['bank_name'] ? $account['bank_name'] : set_value('bank_name')?>">
+                    <select class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-gray-50 px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 text-gray-400 focus:border-blue-100 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 focus:bg-white" name="bank_name">
+                        <option value="">Select Bank</option>
+                        <?php 
+                        if(count($banks) > 0)
+                        {
+                            foreach($banks as $obj)
+                            { 
+                                if($obj->bank_name != '')
+                                {?>
+                                <option value="<?=$obj->bank_name . '-' . $obj->bank_code?>" <?=$obj->bank_name == $account['bank_name'] ? 'selected' : ''?>><?=$obj->bank_name?></option>
+                        <?php
+                                }
+                            }
+                        }
+                        ?>
+                    </select>
                     <label class="before:content[' '] after:content[' '] text-gray-500 pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-sm font-semibold leading-tight text-blue-gray-300 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-blue-400 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-blue-400 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-blue-400 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
                         Bank Name
                     </label>
@@ -61,13 +76,35 @@
         <div class="flex flex-wrap mb-5">
             <div class="w-full md:mb-0 pr-3">
                 <div class="relative h-10 w-full">
-                    <input class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-gray-50 px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 text-gray-400 focus:border-blue-100 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 focus:bg-white" name="welfare" type="text" value="<?=$account['bank_name'] ? $account['bank_name'] : set_value('bank_name')?>">
+                    <input class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-gray-50 px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 text-gray-400 focus:border-blue-100 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 focus:bg-white" name="acct_num" type="text" value="<?=$account['account_num'] ? $account['account_num'] : set_value('acct_num')?>">
                     <label class="before:content[' '] after:content[' '] text-gray-500 pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-sm font-semibold leading-tight text-blue-gray-300 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-blue-400 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-blue-400 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-blue-400 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
                         Account Number
                     </label>
                 </div>
             </div>
         </div>
+        <div class="flex flex-wrap mb-5">
+            <div class="w-full md:mb-0 pr-3">
+                <div class="relative h-10 w-full">
+                    <input class="peer h-full w-full rounded-[7px] border border-blue-gray-200 border-t-transparent bg-gray-50 px-3 py-2.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 text-gray-400 focus:border-blue-100 focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50 focus:bg-white" name="sort_code" type="text" value="<?=$account['sort_code'] ? $account['sort_code'] : set_value('sort_code')?>">
+                    <label class="before:content[' '] after:content[' '] text-gray-500 pointer-events-none absolute left-0 -top-1.5 flex h-full w-full select-none text-sm font-semibold leading-tight text-blue-gray-300 transition-all before:pointer-events-none before:mt-[6.5px] before:mr-1 before:box-border before:block before:h-1.5 before:w-2.5 before:rounded-tl-md before:border-t before:border-l before:border-blue-gray-200 before:transition-all after:pointer-events-none after:mt-[6.5px] after:ml-1 after:box-border after:block after:h-1.5 after:w-2.5 after:flex-grow after:rounded-tr-md after:border-t after:border-r after:border-blue-gray-200 after:transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:leading-[3.75] peer-placeholder-shown:text-blue-gray-500 peer-placeholder-shown:before:border-transparent peer-placeholder-shown:after:border-transparent peer-focus:text-[11px] peer-focus:leading-tight peer-focus:text-blue-400 peer-focus:before:border-t-2 peer-focus:before:border-l-2 peer-focus:before:border-blue-400 peer-focus:after:border-t-2 peer-focus:after:border-r-2 peer-focus:after:border-blue-400 peer-disabled:text-transparent peer-disabled:before:border-transparent peer-disabled:after:border-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500">
+                        Sort Code
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap justify-between w-full px-3 mb-4">
+                <button type="reset" class=" w-full md:w-1/2 hover:bg-gray-100 text-gray-600 py-2 px-4 hover:rounded-l=md">Reset</button>
+                <button type="submit" class="w-full flex flex-row items-center justify-start md:w-1/2 bg-blue-400 hover:bg-blue-500 font-semibold text-white hover:text-dark font-sans rounded-md">
+                    <div class="flex items-center justify-center bg-blue-500 px-2 py-3 rounded-l-md">
+                        <i data-feather="send"></i>
+                    </div>
+                    <div class="w-full flex items-center justify-center border-l border-l-blue-600 px-4 py-3">
+                        <span>Save Account</span>
+                    </div>
+                </button>
+            </div>
 
         <?=form_close()?>
         

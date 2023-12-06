@@ -23,6 +23,7 @@ class DeductionModel extends Model
         'nhf',
         'tax',
         'cps',
+        'misc',
         'year'
     ];
 

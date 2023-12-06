@@ -194,7 +194,7 @@ class Validation extends BaseConfig
 
     /**
      * The following rules are used by the add method of the Allowances
-     * Constroller to create/update a staff's allowances
+     * Controller to create/update a staff's allowances
      * 
      * @array
      */
@@ -207,23 +207,52 @@ class Validation extends BaseConfig
             ]
         ],
         'responsibility' => [
-            'rules' => 'trim|decimal',
+            'rules' => 'trim|numeric',
             'errors' => [
-                'decimal' => 'Enter a valid figure for responsibility allowance'
+                'decimal' => 'An integer/decimal was expected for responsibility allowance'
             ]
         ],
         'entertainment' => [
-            'rules' => 'trim|decimal',
+            'rules' => 'trim|numeric',
             'errors' => [
                 'decimal' => 'An integer/decimal value was expected for entertainment'
             ]
         ],
         'drivers' => [
-            'rules' => 'trim|decimal',
+            'rules' => 'trim|numeric',
             'errors' => [
                 'decimal' => 'An integer/decimal value was expected for drivers allowance'
             ]
         ],
+    ];
+
+     /**
+     * The following rules are used by the add method of the Accounts
+     * Controller to create/update a staff's allowances
+     * 
+     * @array
+     */
+    public $add_accounts_rules = [
+        'bank_name' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Bank Name is missing'
+            ]
+        ],
+        'acct_num' => [
+            'rules' => 'trim|required|min_length[10]|max_length[10]',
+            'errors' => [
+                'required' => 'Account number is missing',
+                'min_length' => 'Account number must be minimum; 10 Digits!',
+                'max_length' => 'Maximum length is 10 Digits'
+            ] 
+        ],
+        'sort_code' => [
+            'rules' => 'trim|min_length[6]',
+            'errors' => [
+                'min_length' => 'Minimum length for sort code is 6-digits'
+            ]
+        ]
     ];
 
 

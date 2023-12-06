@@ -1,30 +1,60 @@
 
-<div class="w-full flex flex-row items-center justify-between">
-    <div class="flex flex-row flex-wrap w-full gap-x-0">
-        <div class="inline-flex bg-white border border-gray-300">
-            <div>
-                <input id="searchQuery" class="appearance-none font-semibold border border-none text-xs focus:border-none w-full py-2.5 px-3 text-gray-500 leading-tight focus:outline-none" type="text" placeholder="Staff name/file no. (e.g P.123)">
-            </div>
-            <div class="relative flex text-left border-l">
-                <input id="paySlipDate" class="datepicker-widget-ym appearance-none font-semibold text-gray-400 bg-white text-xs py-2.5 px-3 border-none focus:outline-none leading-tight" type="text" placeholder="Year & Month" />
-            </div>
-        </div> 
-        <div>
-            <button id="submitQuery" class="inline-flex gap-x-1 bg-blue-400 hover:bg-blue-500 text-sm text-white rounded-r-md ring-1 ring-blue-500 px-3 py-2.5 items-center pointer-events-none">
-                <i data-feather="search" class="font-semibold font-sans text-xs h-5 w-5"></i>
-                <span class="text-xs font-semibold font-sans">Generate Pay Slip</span>
-            </button>
+<div class="hero h-[70vh] bg-base-200 flex flex-col items-center justify-center px-4 mb-5">
+    <div class="hero-content flex-col lg:flex-row-reverse">
+        <img src="<?=base_url('imgs/virtual-learning-automation.png')?>" class="max-w-sm"/>
+        <div class="flex-col space-y-2">
+            <h1 class="text-5xl font-bold">Automate your workspace</h1>
+            <p class="py-4">Useful tools to make your job faster & easier. We understand the difficulty associated with timely delivery of those tedious tasks and the anxiety involved. Tools like Pay Slip Generator, Nominal Roll Editor & Previewer, Date of Retirement Calculator, Tax Calculator, Staff CPS Creator, etc.</p>
+            <p class="py-4">Not sure of the authenticity of a payslip owner? Just scan the QR Code on the printed payslip</p> 
         </div>
     </div>
-    <div class="flex flex-row w-1/2 align-items-center justify-end space-x-4">
-        <a id="advancedSearch" href="<?=base_url('home/search-history')?>" class="inline-flex space-x-2 items-center justify-center ring-1 ring-gray-600 ring-opacity-5 bg-blue-50 hover:bg-white text-gray-400 hover:text-gray-600 text-xs font-sans py-2.5 px-2 rounded-md">
-            <i data-feather="clock" class="w-5 h-5 font-semibold"></i>
-            <span>Search History</span>
-        </a>
+    <div class="w-full flex flex-row items-center justify-between p-2">
+        <div class="flex flex-row flex-wrap w-full gap-x-0">
+            <div class="inline-flex bg-white border border-gray-300">
+                <div>
+                    <input id="searchQuery" class="appearance-none font-semibold border border-none text-xs focus:border-none w-full py-2.5 px-3 text-gray-500 leading-tight focus:outline-none" type="text" placeholder="Staff name/file no. (e.g P.123)">
+                </div>
+                <div class="relative flex text-left border-l">
+                    <input id="paySlipDate" class="datepicker-widget-ym appearance-none font-semibold text-gray-400 bg-white text-xs py-2.5 px-3 border-none focus:outline-none leading-tight" type="text" placeholder="Year & Month" />
+                </div>
+            </div> 
+            <div>
+                <button id="submitQuery" class="inline-flex gap-x-1 bg-blue-950 text-sm text-white rounded-r-md px-3 py-2.5 items-center pointer-events-none">
+                    <i data-feather="search" class="font-semibold font-sans text-xs h-5 w-5"></i>
+                    <span class="text-xs font-semibold font-sans">Generate Pay Slip</span>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
-<div class="w-full flex min-h-96 justify-center bg-zinc-100 rounded-lg pt-6">
-    <div id="containerSearchIllustration" class="flex flex-col h-full w-full space-y-2 items-center justify-center">
+<div class="w-full">
+    <div class="flex flex-col lg:flex-row space-x-3">
+        <div class="bg-blue-950 flex flex-column w-full lg:w-1/3 space-y-2 rounded-md p-3" style="display:flex;flex-direction:column">
+            <div class="w-full flex justify-start space-x-1 text-white">
+                <i class="icofont-duotone icofont-articles text-5xl"></i>
+                <h5 class="text-2xl font-semibold m-0 ">Payslips</h5>
+            </div>
+            <p class="text-gray-200 text-sm">Automate Payslip Generation, making creation payslips a breeze</p>
+        </div>
+        <div class="bg-blue-950 flex flex-column w-full lg:w-1/3 space-y-2 rounded-md p-3" style="display:flex;flex-direction:column">
+            <div class="flex items-center justify-start space-x-1 text-white">
+                <i class="icofont-duotone icofont-content text-5xl"></i>
+                <h5 class="text-2xl font-semibold m-0">Nominal Roll</h5>
+            </div>
+            <p class="text-gray-200 text-sm mt-3">Edit & Download Staff Nominal Roll in widely usable excel format</p>
+        </div>
+        <div class="bg-blue-950 flex flex-column w-full lg:w-1/3 space-y-2 rounded-md p-3" style="display:flex;flex-direction:column">
+            <div class="flex items-center justify-start space-x-1 text-white">
+                <i class="icofont-duotone icofont-contacts text-5xl"></i>
+                <h5 class="text-2xl font-semibold m-0">Pension</h5>
+            </div>
+            <p class="text-gray-200 text-sm">Easily create staff CPS Deductions & Summary Sheets</p>
+        </div>
+    </div>
+</div>
+<!--
+<div id="scrollTo" class="w-full min-h-96 justify-center rounded-lg pt-6">
+    <div id="containerSearchIllustration" class="hidden flex-col h-full w-full space-y-2 items-center justify-center">
         <svg width="280" height="280" viewBox="0 0 280 280" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M52.6631 127.029C52.6631 127.029 91.434 125.477 99.8125 61.7456C107.253 5.14629 172.631 30.9083 191.529 53.4701C216.01 82.6971 202.96 132.974 234.629 139.325C266.299 145.676 245.618 216.292 197.546 209.533C137.746 201.125 152.214 236.069 134.262 250.859C121.379 261.475 68.5515 251.256 66.7908 212.723C65.3092 180.297 51.6315 180.4 41.9366 176.723C27.9544 171.421 19.1441 133.017 52.6631 127.029Z" fill="#DEE9FF"/>
             <path d="M184.462 197.807L146.371 160.168L138.828 167.801L176.92 205.44L184.462 197.807Z" fill="#699CFF"/>
@@ -45,3 +75,5 @@
         <p class="text-gray-400 text-xs font-sans pb-8 mb-4 font-semibold">Working on it...</p>
     </div>
 </div>
+
+-->

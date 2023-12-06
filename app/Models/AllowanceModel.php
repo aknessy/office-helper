@@ -20,7 +20,9 @@ class AllowanceModel extends Model
         'responsibility',
         'entertainment',
         'drivers',
-        'year'
+        'date',
+        'created_at',
+        'updated_at'
     ];
  
 

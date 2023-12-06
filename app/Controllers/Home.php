@@ -49,7 +49,7 @@ class Home extends BaseController
     public function __construct()
     {
         $this->helpers = ['breadcrumb'];
-        $this->uri = new \CodeIgniter\HTTP\URI();
+        $this->uri = new \CodeIgniter\HTTP\URI(current_url());
         $this->staff_model = new \App\Models\StaffModel();
         $this->accounting_model = new \App\Models\AccountingModel();
         $this->allowances_model = new \App\Models\AllowanceModel();
@@ -61,6 +61,7 @@ class Home extends BaseController
     {
         $data['title'] = self::$page_title . 'Home';
         $data['subview'] = 'home/index';
+        $data['uri'] = $this->uri;
         return view('layouts/main', $data, ['saveData' => false]);
     }
 
@@ -156,6 +157,7 @@ class Home extends BaseController
                 $records['net_pay'] = $net_pay;
 
                 $data['subview'] = 'home/manual_payslip';
+                $data['uri'] = $this->uri;
                 $data['records'] = $records;
                 $data['title'] = self::$page_title . 'Manual Payslip Generation';
                 
@@ -164,96 +166,82 @@ class Home extends BaseController
             }
         }else{
             $data['title'] = self::$page_title . 'Manual Payslip Generation';
+            $data['uri'] = $this->uri;
             $data['subview'] = 'home/manual';
             return view('layouts/main', $data);
         }
     }
 
-    public function search(){
-        
-        helper('form');
-        
-        if(!$this->request->is('post')){
-            return $this->response->setStatusCode(405)->setBody('Method Not Allowed');
-        }
-        
-        $search_term = $this->request->getPost('term');
-        $date_picked = $this->request->getPost('date');
-
-        if(isset($search_term, $date_picked))
+    /**
+     * Searches for a staff with the given search term and date
+     * 
+     * @param string $searchTerm
+     * @param string $date
+     * 
+     * @return void
+     */
+    public function payslip(string $searchTerm, string $date)
+    { 
+        if(isset($searchTerm, $date))
         {
             $total_deductions = 0;
             $total_allowances = 0;
             $gross_to_date = 0;
             $tax_to_date = 0;
 
-            $search_term = strtoupper(esc($search_term));
-            $date_year = explode('-', esc($date_picked))[0];
-            $date_month = explode('-', esc($date_picked))[1];
+            $search_term = strtoupper(esc($searchTerm));
+            $date_year = explode('-', esc($date))[0];
             
             $first_query = $this->staff_model->where('file_no', $search_term)->findAll();
+            $second_query = $this->staff_model->findByName($search_term);
+            $record = NULL;
             
-            if($first_query)
+            if($first_query) 
+                $record = $first_query;
+
+            if($second_query)
+                $record = $second_query;
+                
+            //var_dump($record);die;
+            if($record)
             {
-                //var_dump($first_query);die;
-                $id = $first_query[0]['id'];//echo $id;die;
+                $id = $record[0]->id;
                 $account = $this->accounting_model->where('nominal_roll_id', $id)->findAll();
                 $deductions = $this->deductions_model->where('nominal_roll_id', $id)->findAll();
                 $allowances = $this->allowances_model->where('nominal_roll_id', $id)->findAll();
-                
-               $total_allowances = $this->allowances_model->total_allowances($id, $date_year);
-               $total_deductions = $this->deductions_model->total_deductions($id, $date_year);
+
+                $total_allowances = $this->allowances_model->total_allowances($id, $date_year);
+                $total_deductions = $this->deductions_model->total_deductions($id, $date_year);
+
                 /**
-                * Without wrapping the following in if..else statements, we'll get "<!-- X-DEBUG is not a valid JSON"... error
-                * on the client due to JSON.parse being unable to parse the response.
+                 * Without wrapping the following in if..else statements, we'll get "<!-- X-DEBUG is not a valid JSON"... error
+                 * on the client due to JSON.parse being unable to parse the response.
                  */
-                if(NULL == $account[0]['bank_code'] || $account[0]['bank_code'] == 0) 
-                {
+                if(null == $account[0]['bank_code'] || $account[0]['bank_code'] == 0) {
                     /**
                      * The status code helps to determine what kind of redirect that should be handled by the client
                      */
-                    return view('fragments/redirect',
-                            [
-                                'message' => 'No account records found',
-                                'status' => 1,
-                                'staff_id' => $account[0]['id']
-                        ]
-                    );
+                    return redirect()->to('accounts/add/' . $account[0]['id']);
                 }
 
-                if(NULL == $deductions[0]['tax'] || $deductions[0]['tax'] == 0)
-                {
+                if(null == $deductions[0]['tax'] || $deductions[0]['tax'] == 0) {
                     /**
                      * The status code helps to determine what kind of redirect that should be handled by the client
                      */
-                    return view('fragments/redirect', 
-                        
-                                [
-                                    'message' => 'No deduction records found',
-                                    'status' => 2,
-                                    'staff_id' => $account[0]['id']
-                                ]
-                            );
-                    
+                    return redirect()->to('deductions/add/' . $account[0]['id']);
                 }
 
-                if(NULL == $allowances[0]['hazard'] || $allowances[0]['hazard'] == 0){
+                if(null == $allowances[0]['hazard'] || $allowances[0]['hazard'] == 0) {
                     /**
                      * The status code helps to determine what kind of redirect that should be handled by the client
                      */
-                    return view('fragments/redirect', 
-                            [
-                                'message' => 'No allowance records found',
-                                'status' => 3,
-                                'staff_id' => $account[0]['id']
-                            ]
-                        );     
+                    return redirect()->to('allowances/add/' . $account[0]['id']);
                 }
 
-                $net_pay = (float)($first_query[0]['gross'] - $total_deductions);
+                $net_pay = (float)($record[0]->gross - $total_deductions);
                 $total_emolument = (float)($net_pay + $total_allowances);
-                    
-                $data['result'] = $first_query[0];
+                var_dump($allowances);die;
+                $data['result'] = $record[0];
                 $data['account_records'] = $account[0];
                 $data['deduction_records'] = $deductions[0];
                 $data['allowance_records'] = $allowances[0];
@@ -262,34 +250,11 @@ class Home extends BaseController
 
                 $data['netpay'] = $net_pay;
                 $data['emolument'] = $total_emolument;
-                $data['payslip_date'] = $date_picked;
+                $data['payslip_date'] = $date;
 
                 return view('home/payslip', $data);
-            }else{
-                $data['message'] = 'Your search term returned 0 results!';
-                return view('fragments/no-record', $data);
-            }
-            
+            }else
+                return view('fragments/no-record');
         }
-    }
-
-    public function rules($target){
-        $array = [];
-
-        if(is_array($target)){
-            foreach($target as $key => $value){
-                $array[] =  [
-                    $key => [
-                        'rules' => 'required|trim|xss_clean',
-                        'errors' => [
-                            'required' => '{field} is required'
-                        ]
-                    ]
-                    
-                ];
-            }
-        }
-
-        return $array;
     }
 }
