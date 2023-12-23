@@ -5,7 +5,7 @@
         <div class="flex-col space-y-2">
             <h1 class="text-5xl font-bold">Automate your workspace</h1>
             <p class="py-4">Useful tools to make your job faster & easier. We understand the difficulty associated with timely delivery of those tedious tasks and the anxiety involved. Tools like Pay Slip Generator, Nominal Roll Editor & Previewer, Date of Retirement Calculator, Tax Calculator, Staff CPS Creator, etc.</p>
-            <p class="py-4">Not sure of the authenticity of a payslip owner? Just scan the QR Code on the printed payslip</p> 
+            <p>Not sure of the authenticity of a payslip or if the owner is really a staff? Just scan the QR Code on the printed payslip</p> 
         </div>
     </div>
     <div class="w-full flex flex-row items-center justify-between p-2">
