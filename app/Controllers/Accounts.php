@@ -99,6 +99,7 @@ class Accounts extends BaseController
             $data['subview'] = 'account/add';
             $data['validation'] = $this->validation;
             $data['uri'] = $this->uri;
+            
             return view('layouts/main', $data);
        }
     }

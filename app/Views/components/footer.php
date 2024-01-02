@@ -1,8 +1,7 @@
         
-                <div class="flex w-full">
-                    <div class="w-full flex items-center justify-center p-4">
-                        <p class="font-sans text-xs text-slate-400">Created by &copy;aknessy <?=date('Y')?></p>
-                    </div>
+            <div class="flex w-full">
+                <div class="w-full flex items-center justify-center p-4">
+                    <p class="font-sans text-xs text-slate-400">Created by &copy;aknessy <?=date('Y')?></p>
                 </div>
             </div>
         </div> 
@@ -46,11 +45,10 @@
                 var noResultContainer = $('#containerSearchIllustration');
                 var resultContainer = $('#recordsContainer')
                 
-                $(targetEl).on('change', function(){
+                $(targetEl).on('blur', function(){
                     var query_string = $(this).val();
 
-
-                    if(query_string.length >= 5 && (dateWidget).val() != '')
+                    if(query_string != '')
                         $(submitBtn).removeClass('pointer-events-none')
                     else
                         alert("Please fill the file number field!")
@@ -59,7 +57,7 @@
                 $(dateWidget).on('change', function(){
                     var date_string = $(this).val();
 
-                    if($(targetEl).val().length >= 4  && date_string != '')
+                    if($(targetEl).val() != ''  && date_string != '')
                         $(submitBtn).removeClass('pointer-events-none')
                     else
                         alert("You forgot the date field!")
@@ -71,7 +69,7 @@
                     var selectedDate = $(dateWidget).val()
 
                     if(searchTerms !== '' && selectedDate !== '')
-                        window.location.href = "<?=base_url('home/payslip/')?>" + searchTerms + '/' + selectedDate
+                        window.location.href = "<?=base_url('payslip/')?>" + searchTerms + '/' + selectedDate
                 })
             })
         </script>
