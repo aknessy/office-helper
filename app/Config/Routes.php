@@ -32,17 +32,26 @@ $routes->set404Override();
 $routes->get('/', 'Home::index');
 $routes->get('/home', 'Home::index');
 $routes->get('/home/advanced', 'Home::advanced');
-$routes->get('/home/payslip/(:any)/(:any)', [\App\Controllers\Home::class, 'payslip/$1/$2']);
-$routes->get('/home/manual', [\App\Controllers\Home::class, 'manual']);
+
+$routes->get('/payslip', [\App\Controllers\Payslip::class, 'index']);
+$routes->get('/payslip/withterms/(:any)/(:any)', [\App\Controllers\Payslip::class, 'withterms/$1/$2']);
+$routes->get('/payslip/manual', [\App\Controllers\Payslip::class, 'manual']);
+
 $routes->get('/deductions/add/(:num)', [\App\Controllers\Deductions::class, 'add/$1']);
+
 $routes->get('/accounts/add/(:num)', [\App\Controllers\Accounts::class, 'add/$1']);
+
 $routes->get('/allowances/add/(:num)', [\App\Controllers\Allowances::class, 'add/$1']);
+
+$routes->get('/staff', [\App\Controllers\Staff::class, 'index']);
+$routes->get('/staff/create-salary/(:num)/(:any)', [\App\Controllers\Staff::class, 'create_salary/$1/$2']);
 
 $routes->post('/home/fetch_ajax', [\App\Controllers\Home::class, 'search']);
 $routes->post('/home/manual', [\App\Controllers\Home::class, 'manual']);
 $routes->post('deductions/add/(:num)', [\App\Controllers\Deductions::class, 'add']);
 $routes->post('allowances/add/(:num)', [\App\Controllers\Allowances::class, 'add']);
 $routes->post('/accounts/add/(:num)', [\App\Controllers\Accounts::class, 'add']);
+$routes->post('/staff/create-salary/(:num)/(:any)', [\App\Controllers\Staff::class, 'create_salary/$1/$2']);
 /*
  * --------------------------------------------------------------------
  * Additional Routing

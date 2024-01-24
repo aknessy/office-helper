@@ -24,6 +24,12 @@ class Payslip extends BaseController
     protected $staff_model;
 
     /**
+     * Mirrors the Staff Salary Model Class
+     * @Model
+     */
+    protected $salary_model;
+
+    /**
      * Mirrors the created Accounting Model Class
      * @Model
      */
@@ -50,11 +56,29 @@ class Payslip extends BaseController
     {
         $this->helpers = ['breadcrumb'];
         $this->uri = new \CodeIgniter\HTTP\URI(current_url());
+
         $this->staff_model = new \App\Models\StaffModel();
         $this->accounting_model = new \App\Models\AccountingModel();
         $this->allowances_model = new \App\Models\AllowanceModel();
         $this->deductions_model = new \App\Models\DeductionModel();
+        $this->salary_model = new \App\Models\SalaryModel();
+
         $this->validation = \Config\Services::validation();
+    }
+
+    /**
+     * Index page for the payslip module
+     * 
+     * @param None
+     * @return String
+     */
+    public function index()
+    {
+        $data['title'] = self::$page_title . ' Payslip';
+        $data['subview'] = 'payslip/index';
+        $data['uri'] = $this->uri;
+        
+        return view('layouts/main', $data);
     }
 
     /**
@@ -65,7 +89,7 @@ class Payslip extends BaseController
      * 
      * @return void
      */
-    public function index(string $searchTerm, string $date)
+    public function withterms(string $searchTerm, string $date)
     { 
         if(isset($searchTerm, $date))
         {
@@ -91,13 +115,26 @@ class Payslip extends BaseController
             if($record)
             {
                 $id = $record[0]->id;
-                $salary=$this->staff_model->salary($record[0]->grade_level, $record[0]->step);
+                $salary = $this->salary_model->findSalaryByGrade($record[0]->grade_level, $record[0]->step, $date_year);
+                               
+                if(NULL == $salary){
+                    session()->setFlashdata('flashError', 'No salary defined for Grade level: ' . $record[0]->grade_level . '/' . $record[0]->step . '!');
+                    session()->setTempdata('referer', 'payslip/withterms/' . $search_term . '/'. $date, 600);
+                    return redirect()->to('staff/create-salary/' . $record[0]->grade_level . '/' . $record[0]->step);
+                }
 
                 $account = $this->accounting_model->where('nominal_roll_id', $id)->findAll();
                 $deductions = $this->deductions_model->where('nominal_roll_id', $id)->findAll();
-                $allowances = $this->allowances_model->where('nominal_roll_id', $id)->findAll();
 
-                $total_allowances = $this->allowances_model->total_allowances($id, $date_year);
+                /**
+                 * Calculate staff allowance from the returned salary
+                 */
+                $elec = floatval($salary[0]->hazard);
+                $res = (NULL == $salary[0]->responsibility) ? 0.0 : floatval($salary[0]->responsibility);
+                $ent = (NULL == $salary[0]->entertainment) ? 0.0 : floatval($salary[0]->entertainment);
+                $drv = (NULL == $salary[0]->drivers) ? 0.0 : floatval($salary[0]->drivers);
+
+                $total_allowances = $elec + $res + $ent + $drv;
                 $total_deductions = $this->deductions_model->total_deductions($id, $date_year);
 
                 if(empty($account[0]['bank_code'])) {
@@ -114,140 +151,28 @@ class Payslip extends BaseController
                     return redirect()->to('deductions/add/' . $account[0]['id']);
                 }
 
-                if(empty($allowances[0]['hazard'])) {
-                    /**
-                     * The status code helps to determine what kind of redirect that should be handled by the client
-                     */
-                    return redirect()->to('allowances/add/' . $account[0]['id']);
-                }
-
-                $net_pay = (float)($record[0]->gross - $total_deductions);
+                $net_pay = (float)($salary[0]->monthly_consolidated_salary - $total_deductions);
                 $total_emolument = (float)($net_pay + $total_allowances);
                 
                 $data['result'] = $record[0];
                 $data['account_records'] = $account[0];
                 $data['deduction_records'] = $deductions[0];
-                $data['allowance_records'] = $allowances[0];
+                $data['salary'] = $salary[0];
                 $data['total_allowance'] = $total_allowances;
                 $data['total_deduction'] = $total_deductions;
 
                 $data['netpay'] = $net_pay;
                 $data['emolument'] = $total_emolument;
                 $data['payslip_date'] = $date;
-                $data['subview'] = 'home/payslip';
+                $data['subview'] = 'payslip/payslip';
                 $data['title'] = self::$page_title = 'Payslip';
                 $data['uri'] = $this->uri;
 
                 return view('layouts/main', $data);
-            }else
-                return view('fragments/no-record');
-        }
-    }
-
-    public function manual()
-    {
-        helper('form');
-
-        if($this->request->is('post'))
-        {
-            $posts = $this->request->getPost();
-            /**
-             * Check that the submitted form has validly submitted values.
-             * The `manual_payslip` is an array that contains the rules defined in
-             * \Config\Validation 
-             */
-            if(! $this->validation->run($posts, 'manual_payslip')){
-                return redirect()->back()->withInput();
             }else{
-                $file_no = $this->request->getPost('file_no');
-                $is_staff_exists = $this->staff->where('file_no', $file_no)->findAll();
-
-                if(empty($is_staff_exists))
-                    session()->setFlashdata('flashError', "Staff with file number: {$file_no} does not exist!");
-                    
-                $first_name = $this->request->getPost('firstname');
-                $middle_name = $this->request->getPost('middlename');
-                $last_name = $this->request->getPost('lastname');
-                
-                $gross = $this->request->getPost('basic');
-
-                /**
-                 * Earnings
-                 */
-                $transport = (float)$this->request->getPost('transport');
-                $electoral = (float)$this->request->getPost('electoral');
-                $responsibility = (float)$this->request->getPost('responsibility');
-                $entertainment = (float)$this->request->getPost('entertainment');
-                $drivers_allowance = (float)$this->request->getPost('driver_allowance');
-                $meal = (float)$this->request->getPost('meal');
-                $utility = (float)$this->request->getPost('utility');
-                $overtime = (float)$this->request->getPost('overtime');
-                $housing = (float)$this->request->getPost('housing');
-
-                $total_earnings = ($transport + $electoral + $responsibility + $entertainment + $drivers_allowance + $meal + $utility + $overtime + $housing);
-
-                /**
-                 * Deductions
-                 */
-                $cps = (float)$this->request->getPost('cps');
-                $tax = (float)$this->request->getPost('tax');
-                $co_operative = (float)$this->request->getPost('co_operative');
-                $co_operative_dues = (float)$this->request->getPost('co_operative_dues');
-                $co_operative_loan = (float)$this->request->getPost('co_operative_loan');
-                $nhf = (float)$this->request->getPost('nhf');
-                $welfare_dues = (float)$this->request->getPost('welfare_dues');
-                $misc = NULL !== $this->request->getPost('misc') ? (float)$this->request->getPost('misc') : 0.0;
-
-                $total_deduction = ($cps + $tax + $co_operative + $co_operative_dues + $co_operative_loan + $nhf + $welfare_dues + $misc);
-
-                $records = [
-                    'file_no' => $file_no,
-                    'staff_name' => ($first_name . ' ' . $middle_name . ' ' . $last_name),
-                    'pay_point' => $this->request->getPost('paypoint'),
-                    'month' => $this->request->getPost('month'),
-                    'year' => $this->request->getPost('year'),
-                    'gross' => $gross,
-                    'transport' => $transport,
-                    'electoral' => $electoral,
-                    'responsibility' => $responsibility,
-                    'entertainment' => $entertainment,
-                    'driver_allowance' => $drivers_allowance,
-                    'meal' => $meal,
-                    'utility' => $utility,
-                    'overtime' => $overtime,
-                    'cps' => $cps,
-                    'tax' => $tax,
-                    'housing' => $housing,
-                    'co_operative' => $co_operative,
-                    'co_operative_dues' => $co_operative_dues,
-                    'co_operative_loan' => $co_operative_loan,
-                    'nhf' => $nhf,
-                    'welfare_dues' => $welfare_dues,
-                    'misc' => $misc,
-                    'misc_desc' => NULL !== $this->request->getPost('misc_desc') ? $this->request->getPost('misc_desc') : '',
-                ];
-
-                $net_pay = ($gross - $total_deduction);
-                $total_emolument = ($net_pay + $total_earnings);
-
-                $records['total_earnings'] = $total_earnings;
-                $records['total_deduction'] = $total_deduction;
-                $records['total_emolument'] = $total_emolument;
-                $records['net_pay'] = $net_pay;
-
-                $data['subview'] = 'home/manual_payslip';
-                $data['uri'] = $this->uri;
-                $data['records'] = $records;
-                $data['title'] = self::$page_title . 'Manual Payslip Generation';
-                
-                session()->setFlashdata('flashSuccess', 'Pay slip generated for '. ucfirst((string)$first_name));
-                return view('layouts/main', $data);
+                session()->setFlashdata('flashError', 'No records found for the staff with File No.: INEC/CRS/P/' . $search_term);
+                return redirect()->to('payslip');
             }
-        }else{
-            $data['title'] = self::$page_title . 'Manual Payslip Generation';
-            $data['uri'] = $this->uri;
-            $data['subview'] = 'home/manual';
-            return view('layouts/main', $data);
         }
     }
 }

@@ -18,6 +18,8 @@ $options = new QROptions(
 );
 
 $qrcode = (new QRCode($options))->render(base_url('staff/verify/' . strtolower(str_replace('.', '_', $result->file_no))));
+
+$tax = $cps = $nhf = $welfare = $co_op = $co_op_dues = $tot_ded = 0;
 ?>
 
 <div id="scrollTo" class="w-full lg:w-2/3 md:w-1/2 mx-auto min-h-96 justify-center rounded-lg pt-6">
@@ -34,7 +36,7 @@ $qrcode = (new QRCode($options))->render(base_url('staff/verify/' . strtolower(s
                 </div> 
                 <div class="w-full lg:w-1/3 md:w-1/2 flex items-center">
                     <button id="submitQuery" class="w-full flex flex-row gap-x-3 bg-blue-950 text-white rounded-md p-2 items-center pointer-events-none">
-                        <i data-feather="search" class="font-semibold font-sans text-xs h-5 w-5 text-lg"></i>
+                        <i data-feather="search" class="font-semibold font-sans text-xs h-5 w-5"></i>
                         <span class="text-lg font-semibold font-sans">Generate Pay Slip
                     </button>
                 </div>
@@ -71,8 +73,8 @@ $qrcode = (new QRCode($options))->render(base_url('staff/verify/' . strtolower(s
                 <p class="text-center text-md-center text-gray-700 uppercase font-bold">Independent National Electoral Commission</p>
                 <p class="text-center text-sm text-gray-600">81 Murtala Mohammed Highway, Calabar</p>
                 <p class="text-center text-sm text-gray-600">Opposite Pyramid Hotel Calabar, Cross River State</p>
-                <p class="text-center text-sm italic mt-4 mb-2 text-gray-500">Pay Slip For <?=MONTH_WITH_NAMES[explode('-', $payslip_date)[1]] . ', ' . explode('-', $payslip_date)[0]?></p>
-                <table class="table table-fixed w-full border border-gray-600">
+                <p class="text-center text-sm italic mt-4 mb-2 text-gray-500">Pay Slip For <?=MONTH_WITH_NAMES[substr(explode('-', $payslip_date)[1], -1, 1)] . ', ' . explode('-', $payslip_date)[0]?></p>
+                <table class="table table-zebra table-fixed w-full border border-gray-600">
                     <tr>
                         <td class="font-semibold text-sm">Staff File No.:</td>
                         <td class="italic"><?=ucfirst($result->file_no)?></td>
@@ -90,12 +92,12 @@ $qrcode = (new QRCode($options))->render(base_url('staff/verify/' . strtolower(s
                         <td colspan="2" class="border border-gray-600 font-semibold p-2">TAX INFORMATION</td>
                     </tr>
                     <tr>
-                        <td colspan="2" class="border border-gray-600">
+                        <td colspan="2" class="border border-gray-600" style="padding:0!important">
                             <table class="border-collapse w-full">
                                 <tr>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>Basic Pay</div>
-                                        <div><?=CURRENCY_NAIRA . number_format((float)$result->gross, 2)?></div>
+                                        <div><?=CURRENCY_NAIRA . number_format((float)$salary->monthly_consolidated_salary, 2)?></div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -122,7 +124,7 @@ $qrcode = (new QRCode($options))->render(base_url('staff/verify/' . strtolower(s
                                     </td>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>Driver Allowance</div>
-                                        <div><?=CURRENCY_NAIRA . number_format((float)$allowance_records['drivers'], 2)?></div>
+                                        <div><?=CURRENCY_NAIRA . number_format(($salary->drivers == NULL || $salary->drivers == 0) ? 0 : (float)$salary->drivers, 2)?></div>
                                     </td>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>Personal</div>
@@ -138,7 +140,7 @@ $qrcode = (new QRCode($options))->render(base_url('staff/verify/' . strtolower(s
                                     </td>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>Entertainment</div>
-                                        <div><?=CURRENCY_NAIRA . number_format((float)$allowance_records['entertainment'] == NULL || (float)$allowance_records['entertainment'] == 0 ? '0.00' : (float)$allowance_records['entertainment'])?></div>
+                                        <div><?=CURRENCY_NAIRA . number_format(($salary->entertainment == NULL || (float)$salary->entertainment == 0) ? 0 : (float)$salary->entertainment, 2)?></div>
                                     </td>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>Medical</div>
@@ -146,11 +148,11 @@ $qrcode = (new QRCode($options))->render(base_url('staff/verify/' . strtolower(s
                                     </td>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>Hazard</div>
-                                        <div><?=CURRENCY_NAIRA . number_format(($allowance_records['hazard'] == NULL || $allowance_records['hazard'] == 0 ? '0.00' : (float)$allowance_records['hazard']), 2)?></div>
+                                        <div><?=CURRENCY_NAIRA . number_format(($salary->hazard == NULL || $salary->hazard == 0) ? 0 : (float)$salary->hazard, 2)?></div>
                                     </td>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>Responsibility</div>
-                                        <div><?=CURRENCY_NAIRA . number_format(($allowance_records['responsibility'] == NULL || $allowance_records['responsibility'] == 0 ? '0.00' : (float)$allowance_records['responsibility']), )?></div>
+                                        <div><?=CURRENCY_NAIRA . number_format(($salary->responsibility == NULL || $salary->responsibility == 0) ? 0 : (float)$salary->responsibility, 2)?></div>
                                     </td>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>Electoral Duty</div>
@@ -190,16 +192,22 @@ $qrcode = (new QRCode($options))->render(base_url('staff/verify/' . strtolower(s
                                 </tr>
                             </table>
                         </td>
-                        <td colspan="2" class="border border-gray-600 p-2">
+                        <td colspan="2" class="border border-gray-600" style="padding:0!important">
                             <table class="border-collapse w-full">
                                 <tr>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>Tax <em class="text-xs italic">(this month)</em></div>
-                                        <div><?=CURRENCY_NAIRA . number_format(($deduction_records['tax'] == NULL || $deduction_records['tax'] == 0 ? '0.00' : floatval($deduction_records['tax'])) ,2)?></div>
+                                        <?php
+                                            $tax = ($deduction_records['tax'] == NULL || $deduction_records['tax'] == 0) ? 0 : (float)$deduction_records['tax'];
+                                        ?>
+                                        <div><?=CURRENCY_NAIRA . number_format($tax ,2)?></div>
                                     </td>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>Housing Fund <em class="text-xs italic">(NHF)</em></div>
-                                        <div><?=CURRENCY_NAIRA . number_format(floatval($deduction_records['nhf']), 2)?></div>
+                                        <?php 
+                                            $nhf = ($deduction_records['nhf'] == NULL || $deduction_records['nhf'] == 0) ? 0 : (float)$deduction_records['nhf'];
+                                        ?>
+                                        <div><?=CURRENCY_NAIRA . number_format($nhf, 2)?></div>
                                     </td>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>Housing <em class="text-xs italic">(NHF)</em> Loan</div>
@@ -231,24 +239,36 @@ $qrcode = (new QRCode($options))->render(base_url('staff/verify/' . strtolower(s
                                     </td>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>CPS</div>
-                                        <div><?=CURRENCY_NAIRA . number_format(($deduction_records['cps'] == NULL || $deduction_records['cps'] == 0 ? '0.00' : (float)$deduction_records['cps']) ,2)?></div>
+                                        <?php
+                                            $cps = ($deduction_records['cps'] == NULL || $deduction_records['cps'] == 0) ? 0 : (float)$deduction_records['cps'];
+                                        ?>
+                                        <div><?=CURRENCY_NAIRA . number_format($cps ,2)?></div>
                                     </td>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>MPCS - Contribution</div>
-                                        <div><?=CURRENCY_NAIRA . number_format(($deduction_records['co_operative'] == NULL || $deduction_records['co_operative'] == 0 ? '0.00' : (float)$deduction_records['co_operative']) ,2)?></div>
+                                        <?php
+                                            $co_op = ($deduction_records['co_operative'] == NULL || $deduction_records['co_operative'] == 0) ? 0 : (float)$deduction_records['co_operative']; 
+                                        ?>
+                                        <div><?=CURRENCY_NAIRA . number_format($co_op ,2)?></div>
                                     </td>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>Welfare</div>
-                                        <div><?=CURRENCY_NAIRA . number_format(($deduction_records['welfare'] == NULL || $deduction_records['welfare'] == 0 ? '0.00' : (float)$deduction_records['welfare']) ,2)?></div>
+                                        <?php
+                                            $welfare = ($deduction_records['welfare'] == NULL || $deduction_records['welfare'] == 0) ? 0 : (float)$deduction_records['welfare'];
+                                        ?>
+                                        <div><?=CURRENCY_NAIRA . number_format($welfare ,2)?></div>
                                     </td>
                                     <td class="flex items-center justify-between font-mono">
                                         <div>MPCS - Dues</div>
-                                        <div><?=CURRENCY_NAIRA . number_format(($deduction_records['co_operative_dues'] == NULL || $deduction_records['co_operative_dues'] == 0 ? '0.00' : (float)$deduction_records['co_operative_dues']) ,2)?></div>
+                                        <?php
+                                            $co_op_dues = ($deduction_records['co_operative_dues'] == NULL || $deduction_records['co_operative_dues'] == 0) ? 0 : (float)$deduction_records['co_operative_dues'];
+                                        ?>
+                                        <div><?=CURRENCY_NAIRA . number_format($co_op_dues, 2)?></div>
                                     </td>
                                 </tr>
                             </table>
                         </td>
-                        <td colspan="2" class="border border-gray-600 p-2">
+                        <td colspan="2" class="border border-gray-600" style="padding:0!important">
                             <table class="border-collapse w-full">
                                 <tr>
                                     <td class="flex items-center justify-between font-mono">
@@ -273,7 +293,10 @@ $qrcode = (new QRCode($options))->render(base_url('staff/verify/' . strtolower(s
                         <td colspan="2" class="border border-gray-500 p-2">
                             <div class="w-full flex flex-wrap items-center justify-between font-semibold font-mono">
                                 <div class="mr-6">Total Deductions</div>
-                                <div>=<?=CURRENCY_NAIRA . number_format($total_deduction, 2)?></div>
+                                <?php
+                                    $tot_ded = $tax + $co_op + $welfare + $nhf + $co_op_dues + $cps;
+                                ?>
+                                <div>=<?=CURRENCY_NAIRA . number_format($tot_ded, 2)?></div>
                             </div>
                         </td>
                         <td colspan="2" class="border border-gray-500 p-2">

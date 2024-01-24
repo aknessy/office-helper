@@ -44,4 +44,16 @@ class StaffModel extends Model
         $query = $this->builder->like('staff_name', $name)->get();
         return $query->getResult() ? $query->getResult() : NULL;
     }
+
+    /**
+     * List of all staff
+     * 
+     * @param string $name
+     * @return Object
+     */
+    public function listStaff(){
+        $builder = $this->builder();
+        $query = $builder->get();
+        return $query->getResult() ? $query->getResult() : NULL;
+    }
 }

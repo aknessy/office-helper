@@ -255,5 +255,38 @@ class Validation extends BaseConfig
         ]
     ];
 
+    /**
+     * The following rules are used by the create salary method of the Staff Class
+     * Controller to create a salary for a particular grade level & step
+     * 
+     * @array
+     */
+    public $create_salary = [
+        'year' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Salary Year is missing'
+            ]
+        ],
+        'annual_sal' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Annual Salary is required'
+            ]
+        ],
+        'monthly_sal' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Monthly Salary is required'
+            ]
+        ],
+        'hazard' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Electoral Hazard is required'
+            ]
+        ]
+    ];
+
 
 }

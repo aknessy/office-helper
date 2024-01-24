@@ -37,8 +37,9 @@ class DeductionModel extends Model
     public function total_deductions(int $staff_id, $year = 2023)
     {
         $total = 0;
-
-        $query = $this->builder->
+        $builder = $this->builder();
+        
+        $query = $builder->
             select('welfare, co_operative, co_operative_dues, loan, nhf, tax, cps')
             ->where(['nominal_roll_id' => $staff_id, 'YEAR(date)' => $year])
             ->get();

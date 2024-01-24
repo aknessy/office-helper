@@ -17,7 +17,7 @@ class SalaryModel extends Model
         'grade',
         'step',
         'annual_consolidated_salary',
-        'monthly_consolidate_salary',
+        'monthly_consolidated_salary',
         'hazard',
         'responsibility',
         'entertainment',
@@ -58,13 +58,15 @@ class SalaryModel extends Model
      * @param $step
      * @return Object
      */
-    public function findSalaryByGrade(int $grade, int $step = NULL)
+    public function findSalaryByGrade(int $grade, int $step = 0, $year = 2023)
     {
-        if(NULL == $step)
-            $query = $this->builder->where('grade', $grade)->get();
-        else
-            $query = $this->builder->where(['grade' => $grade, 'step' => $step])->get();
-
+        $builder = $this->builder();
         
+        if($step == 0 || $step < 1)
+            $query = $builder->getWhere(['grade' => $grade, 'year' => $year]);
+        else
+            $query = $builder->getWhere(['grade' => $grade, 'step' => $step, 'year' => $year]);
+
+        return $query->getResult() ? $query->getResult() : NULL;
     }
 }

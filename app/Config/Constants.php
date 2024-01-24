@@ -120,3 +120,16 @@ define('STATUS_CODES_INTERNAL',
         3 => 'No allowance records found'
     ]
 );
+define('DESIGNATION', [
+        'REC' => 'Resident Electoral Commissioner',
+        'DD' => 'Deputy Director',
+        'AD' => 'Assistant Director',
+        'CCO' => 'Chief Clerical Officer',
+        'AO I' => 'Administrative Officer I',
+        'AO II' => 'Administrative OfficerII',
+        'SAO' => 'Senior Administrative Officer',
+        'AEO' => 'Assistant Executive Officer',
+        'EO' => 'Executive Officer',
+        'PAO' => 'Principal Administrative Officer'
+    ]
+);

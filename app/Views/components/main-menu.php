@@ -31,11 +31,19 @@
                 </a>
             </div>
             <div class="btn btn-ghost hover:bg-secondary hover:text-white normal-case border-b-2 rounded-0 <?=$uri->getSegment(1) == 'staff' ? 'border-b-blue-950' : ''?>">
-                <a href="#" class="text-sm flex flex-row items-center justify-between space-x-1">
+                <a href="<?=base_url('staff')?>" class="text-sm flex flex-row items-center justify-between space-x-1">
                     <span>
                         <i data-feather="users"></i>
                     </span>
                     <span>Staff</span>
+                </a>
+            </div>
+            <div class="btn btn-ghost hover:bg-secondary hover:text-white normal-case border-b-2 rounded-0 <?=$uri->getSegment(1) == 'payslip' ? 'border-b-blue-950' : ''?>">
+                <a href="<?=base_url('payslip')?>" class="text-sm flex flex-row items-center justify-between space-x-1">
+                    <span>
+                        <i data-feather="file-text"></i>
+                    </span>
+                    <span>Payslip</span>
                 </a>
             </div>
             <div class="btn btn-ghost hover:bg-secondary hover:text-white normal-case border-b-2 rounded-0 <?=$uri->getSegment(1) == 'departments' ? 'border-b-blue-950' : ''?>">
