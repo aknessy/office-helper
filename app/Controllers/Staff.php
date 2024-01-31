@@ -119,4 +119,44 @@ class Staff extends BaseController
             return view('layouts/main', $data);
         }
     }
+
+    public function add()
+    {
+        helper('form');
+        
+        $data['title'] = self::$page_title . 'New Nominal Roll Entry';
+        $data['subview'] = 'staff/add';
+        $data['uri'] = $this->uri;
+
+        return view('layouts/main', $data);
+    }
+
+    public function fetch_staff()
+    {
+        helper('form');
+        helper('retirement_calc');
+        
+        if($this->request->is('post'))
+        {
+            $this->validation->setRules([
+                'query' => 'required|alpha_numeric_punct'
+            ]);
+
+            $validation_data = $this->request->getPost();
+            
+            if($this->validation->run($validation_data))
+            {
+                $query1 = $this->staff_model->findByName($validation_data['query']);
+                $query2 = $this->staff_model->findByFileNum($validation_data['query']);
+                $record = NULL;
+
+                if($query1) $record = $query1;
+                if($query2) $record = $query2;
+
+                $data['staff'] = $record;
+
+                echo view('staff/search_response', $data);
+            }
+        }
+    }
 }

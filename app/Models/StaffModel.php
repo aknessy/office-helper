@@ -41,19 +41,36 @@ class StaffModel extends Model
      */
     public function findByName(string $name)
     {
-        $query = $this->builder->like('staff_name', $name)->get();
+        $builder = $this->builder();
+
+        $query = $builder->like('staff_name', $name)->get();
         return $query->getResult() ? $query->getResult() : NULL;
     }
 
+    /**
+     * Look for staff with using name
+     * 
+     * @param string $name
+     * @return Object
+     */
+    public function findByFileNum(string $str)
+    {
+        $builder = $this->builder();
+
+        $query = $builder->like('file_no', $str)->get();
+        return $query->getResult() ? $query->getResult() : NULL;
+    }
     /**
      * List of all staff
      * 
      * @param string $name
      * @return Object
      */
-    public function listStaff(){
+    public function listStaff()
+    {
         $builder = $this->builder();
-        $query = $builder->get();
+
+        $query = $this->builder->get();
         return $query->getResult() ? $query->getResult() : NULL;
     }
 }

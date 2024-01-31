@@ -45,6 +45,7 @@ $routes->get('/allowances/add/(:num)', [\App\Controllers\Allowances::class, 'add
 
 $routes->get('/staff', [\App\Controllers\Staff::class, 'index']);
 $routes->get('/staff/create-salary/(:num)/(:any)', [\App\Controllers\Staff::class, 'create_salary/$1/$2']);
+$routes->get('/staff/add-record', [\App\Controllers\Staff::class, 'add']);
 
 $routes->post('/home/fetch_ajax', [\App\Controllers\Home::class, 'search']);
 $routes->post('/home/manual', [\App\Controllers\Home::class, 'manual']);
@@ -52,6 +53,7 @@ $routes->post('deductions/add/(:num)', [\App\Controllers\Deductions::class, 'add
 $routes->post('allowances/add/(:num)', [\App\Controllers\Allowances::class, 'add']);
 $routes->post('/accounts/add/(:num)', [\App\Controllers\Accounts::class, 'add']);
 $routes->post('/staff/create-salary/(:num)/(:any)', [\App\Controllers\Staff::class, 'create_salary/$1/$2']);
+$routes->post('/staff/fetch-staff', [\App\Controllers\Staff::class, 'fetch_staff']);
 /*
  * --------------------------------------------------------------------
  * Additional Routing

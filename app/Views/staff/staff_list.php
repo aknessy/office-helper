@@ -3,14 +3,21 @@
         <div class="text-sm breadcrumbs">
             <ul>
                 <li><a href="<?=base_url()?>">Home</a></li> 
-                <li>Staff List</li>
+                <li class="text-gray-300">Staff List</li>
             </ul>
         </div>
-        <div class="join">
-            <input id="searchPhrase" type="text" placeholder="Search Nominal Roll" class="join-item text-xs text-gray-500 input input-bordered focus:outline-none input-sm w-full max-w-xs" />
-            <button class="join-item btn btn-outline btn-sm text-xs flex col searchSubmitBtn" data-target="searchPhrase">
-                <span>Search</span>
-            </button>
+        <div class="flex items-center space-x-1">
+            <div class="join">
+                <input id="searchPhrase" type="text" placeholder="Search Nominal Roll" class="join-item text-xs text-gray-500 input input-bordered focus:outline-none input-sm w-full max-w-xs" />
+                <button id="searchSubmitBtn" class="join-item btn btn-outline bt btn-sm text-xs flex flex-col" data-target="#searchPhrase">
+                    <span>Search</span>
+                </button>
+            </div>
+            <div class="tooltip tooltip-info tooltip-left" data-tip="Enter Staff Name or File Number (In the format P.xxx)">
+                <span class="cursor-help">
+                    <i class="text-sm text-gray-600" data-feather="help-circle"></i>
+                </span>
+            </div>
         </div>
     </div>
     <div class="hero bg-base-200 flex items-center justify-between py-2 px-4 rounded-lg mb-5 w-full">
@@ -18,12 +25,12 @@
             <h3 class="font-bold text-2xl text-dark">Staff Nominal Roll</h3>
             <p class="text-xs mb-3">List of Commission staff deployed to Cross River State</p>
         </div>
-        <a href="<?=base_url('staff/add')?>" class="inline-flex flex-col hover:bg-blue-600 text-xs py-2 px-3 text-white btn btn-sm bg-blue-950 capitalize items-center justify-between">
+        <a href="<?=base_url('staff/add-record')?>" class="inline-flex flex-col hover:bg-secondary text-xs py-2 px-3 text-white btn btn-sm bg-blue-950 capitalize items-center justify-between">
             <i data-feather="user-plus"></i>
             <span>Add Record</span>
         </a>
     </div>
-    <div class="">
+    <div id="searchResponseContainer" class="w-full">
         <div class="w-full overfow-x-auto">
             <table class="table table-zebra border">
                 <thead class="text-white bg-gray-500">
@@ -44,8 +51,8 @@
                         $sn = 1;
                         foreach($staff as $obj)
                         {?>
-                            <tr>
-                                <td><?=$sn?>
+                            <tr class="<?=$sn % 2 !== 0 ? 'hover' : ''?>">
+                                <td><?=$sn?>.</td>
                                 <td>
                                     <div class="flex items-center gap-3 w-full">
                                         <div class="avatar">
@@ -124,7 +131,26 @@
 </div>
 
 <script type="text/javascript">
-    $(function()[
-        alert("Page ready!")
-    ])
+    $(function(){
+        $('#searchSubmitBtn').click(function(){
+            var target = $(this).data('target');
+            var searchTerm = $(target).val()
+            var threadAction = $('#activityInProgress')
+
+            if(searchTerm != ''){
+                $(threadAction).removeClass('hidden')
+
+                $.ajax({
+                    url : '<?=base_url('staff/fetch-staff')?>',
+                    method : 'post',
+                    data : { query : searchTerm},
+                    success : function(res){
+                        $('#searchResponseContainer').empty().append(res)
+                        $(threadAction).addClass('hidden')
+                    },
+                    error : function(err){}
+                })
+            }
+        })
+    })
 </script>
