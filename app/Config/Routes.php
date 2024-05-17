@@ -32,20 +32,17 @@ $routes->set404Override();
 $routes->get('/', 'Home::index');
 $routes->get('/home', 'Home::index');
 $routes->get('/home/advanced', 'Home::advanced');
-
 $routes->get('/payslip', [\App\Controllers\Payslip::class, 'index']);
 $routes->get('/payslip/withterms/(:any)/(:any)', [\App\Controllers\Payslip::class, 'withterms/$1/$2']);
 $routes->get('/payslip/manual', [\App\Controllers\Payslip::class, 'manual']);
-
 $routes->get('/deductions/add/(:num)', [\App\Controllers\Deductions::class, 'add/$1']);
-
 $routes->get('/accounts/add/(:num)', [\App\Controllers\Accounts::class, 'add/$1']);
-
 $routes->get('/allowances/add/(:num)', [\App\Controllers\Allowances::class, 'add/$1']);
-
 $routes->get('/staff', [\App\Controllers\Staff::class, 'index']);
 $routes->get('/staff/create-salary/(:num)/(:any)', [\App\Controllers\Staff::class, 'create_salary/$1/$2']);
 $routes->get('/staff/add-record', [\App\Controllers\Staff::class, 'add']);
+$routes->get('/staff/add-image/(:any)', [\App\Controllers\Staff::class, 'add_image/$1'], ['as' => 'staff_image']);
+$routes->get('/staff/staff-view/(:any)', [\App\Controllers\Staff::class, 'view_staff/$1']);
 
 $routes->post('/home/fetch_ajax', [\App\Controllers\Home::class, 'search']);
 $routes->post('/home/manual', [\App\Controllers\Home::class, 'manual']);
@@ -54,6 +51,9 @@ $routes->post('allowances/add/(:num)', [\App\Controllers\Allowances::class, 'add
 $routes->post('/accounts/add/(:num)', [\App\Controllers\Accounts::class, 'add']);
 $routes->post('/staff/create-salary/(:num)/(:any)', [\App\Controllers\Staff::class, 'create_salary/$1/$2']);
 $routes->post('/staff/fetch-staff', [\App\Controllers\Staff::class, 'fetch_staff']);
+$routes->post('/staff/fetch-lgas', [\App\Controllers\Staff::class, 'fetch_lgas']);
+$routes->post('/staff/add-record', [\App\Controllers\Staff::class, 'add']);
+$routes->post('/staff/add-image/(:any)', [\App\Controllers\Staff::class, 'add_image/$1']);
 /*
  * --------------------------------------------------------------------
  * Additional Routing

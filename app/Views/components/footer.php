@@ -11,6 +11,7 @@
         <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+        <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
 
 
         <script>

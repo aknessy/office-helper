@@ -21,8 +21,11 @@ if(!function_exists('retire_when'))
         $service_years_limit = 35;
         $service_age_limit = 60;
 
-        $year_of_birth = isset(explode('/', $dob)[2]) ? explode('/', $dob)[2] : 0;
-        $year_of_appt = isset(explode('/', $doa)[2]) ? explode('/', $doa)[2] : 0;
+        $dob = str_replace('/', '-', $dob);
+        $doa = str_replace('/', '-', $doa);
+
+        $year_of_birth = isset(explode('-', $dob)[0]) ? explode('-', $dob)[0] : 0;
+        $year_of_appt = isset(explode('-', $doa)[0]) ? explode('-', $doa)[0] : 0;
         
         $age_calc = ($year_of_birth + $service_age_limit);
         $service_calc = ($year_of_appt + $service_years_limit);
@@ -30,13 +33,13 @@ if(!function_exists('retire_when'))
         if($age_calc > $service_calc){
             $r = $service_calc;
             $mode = 'Yos';
-            $retirement = (isset(explode('/', $doa)[0]) ? explode('/', $doa)[0] : 0) . '/' . 
-                (isset(explode('/', $doa)[1]) ? explode('/', $doa)[1] : 0) . '/' . $r;
+            $retirement = $r . '-' . (isset(explode('-', $doa)[1]) ? explode('-', $doa)[1] : 0) . '-' . 
+                (isset(explode('-', $doa)[2]) ? explode('-', $doa)[2] : 0);
         }else{
             $r = $age_calc;
             $mode = 'Age';
-            $retirement = (isset(explode('/', $dob)[0]) ? explode('/', $dob)[0] : 0) . '/' . 
-                (isset(explode('/', $dob)[1]) ? explode('/', $dob)[1] : 0) . '/' . $r;
+            $retirement = $r . '-' . (isset(explode('-', $dob)[1]) ? explode('-', $dob)[1] : 0) . '-' . 
+                (isset(explode('-', $dob)[2]) ? explode('-', $dob)[2] : 0);
         }
 
         return ($type == 'retirement' ? $retirement : $mode);

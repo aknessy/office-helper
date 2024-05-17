@@ -288,5 +288,119 @@ class Validation extends BaseConfig
         ]
     ];
 
+    /**
+     * The following rules are used by the add staff record method of the Staff Class
+     * Controller to add a record to the staff nominal roll
+     * 
+     * @array
+     */
+    public $add_staff_record = [
+        'title' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Title field is required'
+            ]
+        ],
+        'fname' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'First name is required'
+            ]
+        ],
+        'lname' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Lastname is required'
+            ]
+        ],
+        'gender' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Gender is required'
+            ]
+        ],
+        'rank' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Rank/Designation is required'
+            ]
+        ],
+        'grade_level' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Grade Level is required'
+            ]
+        ],
+        'step' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Step is required'
+            ]
+        ],
+        'qualification' => [
+            'rules' => 'required',
+            'errors' => [
+                'required' => 'Enter at least one qualification'
+            ]
+        ],
+        'cadre' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Staff Cadre is required'
+            ]
+        ],
+        'date_of_birth' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Date of birth'
+            ]
+        ],
+        'first_appt' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'First Appointment is required'
+            ]
+        ],
+        'state_of_origin' => [
+            'rules' => 'trim|required|integer',
+            'errors' => [
+                'required' => 'State of Origin is required',
+                'integer' => 'State must be an Integer'
+            ]
+        ],
+        'lga_of_origin' => [
+            'rules' => 'trim|required|integer',
+            'errors' => [
+                'required' => 'LGA of origin is required',
+                'integer' => 'LGA of origin must be an Integer'
+            ]
+        ],
+        'phone' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Phone number is required'
+            ]
+        ],
+        'pfa' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Pension Fund Administrator is required',
+            ]
+        ],
+        'rsa_pin' => [
+            'rules' => 'trim|required|min_length[15]',
+            'errors' => [
+                'required' => 'RSA PIN is required',
+                'min_length[15]' => 'Ensure the RSA PIN is correct'
+            ]
+        ],
+        'i_certify' => [
+            'rules' => 'trim|required|integer',
+            'errors' => [
+                'required' => 'Checkbox to ensure the information provided is correct to the best of your knowledge, must be checked',
+            ]
+        ],
+    ];
+
 
 }

@@ -24,10 +24,22 @@ class Staff extends BaseController
     protected $staff_model;
 
     /**
+     * Mirrors the created StatesModel Class
+     * @Model
+     */
+    protected $states_model;
+
+    /**
      * Mirrors the staff salary model class
      * @Model
      */
     protected $staff_salary;
+
+    /**
+     * Mirrors the created StatesLgasModel Class
+     * @Model
+     */
+    protected $states_lgas_model;
 
     /**
      * Validates data
@@ -42,6 +54,9 @@ class Staff extends BaseController
 
         $this->staff_model = new \App\Models\StaffModel();
         $this->staff_salary = new \App\Models\SalaryModel();
+        $this->states_model = new \App\Models\StatesModel();
+        $this->states_lgas_model = new \App\Models\StatesLgasModel();
+
         $this->validation = \Config\Services::validation();
     }
 
@@ -123,9 +138,154 @@ class Staff extends BaseController
     public function add()
     {
         helper('form');
+        helper('retirement_calc');
+        helper('rand_string');
         
+        if($this->request->is('post')){
+            $posts = $this->request->getPost();
+            
+            if(!$this->validation->run($posts, 'add_staff_record')){
+                return redirect()->back()->withInput();
+            }else{
+                $file_nos = $this->staff_model->findColumn('file_no');
+                $latest_in_file = 0;
+                
+                if($file_nos){
+                    foreach($file_nos as $k => $v)
+                    {
+                        $n = intval(explode('.', $v)[1]);
+                        if($n > $latest_in_file)
+                            $latest_in_file = $n;
+                    }
+                }
+
+                $count_all_staff = count($this->staff_model->findAll());
+                $uid = random_string('alnum',4) . '-' . random_string('alnum',4) . '-' . mt_rand(1, $count_all_staff) . '-' . random_string('alnum',8);
+
+                $new_staff_file_num = ($latest_in_file == 0 ? mt_rand(100, 999) : ($latest_in_file + 1));
+                $staff_name = $posts['lname'] . ', ' . $posts['fname'] . ' ' . $posts['mname'] . '(' . $posts['title'] . ')';
+                
+                if($this->staff_model->findByName($staff_name)){
+                    session()->setFlashData('flashWarning', 'Staff already exists!');
+                    return redirect('staff/add-record');
+                }
+
+                $date_of_ret = retire_when($posts['date_of_birth'], $posts['first_appt']);
+                $mode = retire_when($posts['date_of_birth'], $posts['first_appt'], 'mode');
+
+                $record = [
+                    'uid' => strtoupper($uid),
+                    'file_no' => 'P.'.$new_staff_file_num,
+                    'staff_name' => strtoupper($staff_name),
+                    'gender' => $posts['gender'],
+                    'marital_status' => $posts['marital_status'],
+                    'rank' => $posts['rank'],
+                    'grade_level' => $posts['grade_level'],
+                    'step' => $posts['step'],
+                    'qualification' => json_encode($posts['qualification']),
+                    'cadre' => strtoupper($posts['cadre']),
+                    'date_of_birth' => $posts['date_of_birth'],
+                    'first_appt' => $posts['first_appt'],
+                    'confirmation' => $posts['confirmation'],
+                    'state_of_origin' => $posts['state_of_origin'],
+                    'lga_of_origin' => $posts['lga_of_origin'],
+                    'phone' => $posts['phone'],
+                    'email' => $posts['email'],
+                    'pfa' => $posts['pfa'],
+                    'rsa_pin' => $posts['rsa_pin'],
+                    'date_of_ret' => $date_of_ret,
+                    'mode_of_ret' => $mode,
+                    'created_at' => date('Y-m-d H:i:s'),
+                    'created_by' => 1
+                ];
+
+                if($this->staff_model->insert($record)){
+                    session()->setFlashdata('flashSuccess', 'New record added to the nominal roll');
+                    return redirect()->to('staff/add-image/' . $uid);
+                }else{
+                    session()->setFlashdata('flashError', 'Failed to create a record with file number: `P.' . $new_staff_file_num .'`. Try again, Please!');                
+                    return redirect()->back()->withInput();
+                }
+            }
+        }
+
         $data['title'] = self::$page_title . 'New Nominal Roll Entry';
         $data['subview'] = 'staff/add';
+        $data['uri'] = $this->uri;
+        $data['states'] = $this->states_model->getStates();
+
+        return view('layouts/main', $data);
+    }
+
+    public function add_image($uid)
+    {
+        helper('form');
+
+        if($this->request->getFile('imageName'))
+        {
+            $validationRule = [
+                'imageName' => [
+                    'label' => 'New Staff Photo',
+                    'rules' => [
+                        'uploaded[imageName]',
+                        'is_image[imageName]',
+                        'mime_in[imageName,image/jpg,image/jpeg,image/gif,image/png,image/webp]',
+                        'max_size[imageName,100]',
+                        'max_dims[imageName,1024,768]',
+                    ],
+                ],
+            ];
+
+            if(! $this->validate($validationRule))
+                return redirect()->back();
+            
+            $img = $this->request->getFile('imageName');
+
+            if(! $img->isValid())
+                session()->setFlashData('flashError', 'Upload file is invalid!');
+
+            $img_ext = $img->getClientExtension();
+            $save_as = $uid . '.' . $img_ext;
+
+            $img->move(ROOTPATH . 'public/assets/uploads/images', $save_as, TRUE);
+
+            if($img->hasMoved()){
+                $where_params = [
+                    'photo' => $save_as,
+                    'updated_at' => date('Y-m-d H:i:s'),
+                    'updated_by' => 1
+                ];
+
+                $this->staff_model->updateStaff($uid, $where_params);
+
+                if($this->staff_model->affectedRows()){
+                    session()->setFlashData('flashSuccess', 'Staff photo uploaded successfully!');
+                    return redirect()->to('staff/staff-view/' . $uid);
+                }else
+                    session()->setFlashData('flashError', 'Photo uploaded but not saved!'); 
+            }else
+                session()->setFlashData('flashError', 'Image upload failed! Please try again.');
+
+            return redirect()->to('staff/add-image/' . $uid);
+        }
+
+        $data['title'] = self::$page_title . 'New Nominal Roll Entry - Staff Photo';
+        $data['subview'] = 'staff/add_image';
+        $data['uri'] = $this->uri;
+
+        return view('layouts/main', $data);
+    }
+
+    public function view_staff($uid)
+    {
+        helper('retirement_calc');
+        
+        $staff = $this->staff_model->findByUID($uid);
+
+        $data['rating'] = 92;
+        $data['staff'] = $staff;
+        $data['title'] = self::$page_title . 'View Staff';
+        $data['subview'] = 'staff/view';
         $data['uri'] = $this->uri;
 
         return view('layouts/main', $data);
@@ -157,6 +317,26 @@ class Staff extends BaseController
 
                 echo view('staff/search_response', $data);
             }
+        }
+    }
+
+    public function fetch_lgas()
+    {
+        helper('form');
+        $states_lgas = [];
+
+        if($this->request->is('post'))
+        {
+            $this->validation->setRules([
+                'state' => 'required|integer'
+            ]);
+
+            $validation_data = $this->request->getPost();
+
+            if($this->validation->run($validation_data))
+                $states_lgas = $this->states_lgas_model->getLgas($validation_data['state']);
+            
+            return $this->response->setJSON($states_lgas);
         }
     }
 }

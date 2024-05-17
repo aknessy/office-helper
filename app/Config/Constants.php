@@ -126,10 +126,25 @@ define('DESIGNATION', [
         'AD' => 'Assistant Director',
         'CCO' => 'Chief Clerical Officer',
         'AO I' => 'Administrative Officer I',
-        'AO II' => 'Administrative OfficerII',
+        'AO II' => 'Administrative Officer II',
         'SAO' => 'Senior Administrative Officer',
         'AEO' => 'Assistant Executive Officer',
         'EO' => 'Executive Officer',
         'PAO' => 'Principal Administrative Officer'
     ]
 );
+define('PENSION_ADMINISTRATORS', [
+    'Access Pensions Limited',
+    'ARM Pensions Managers',
+    'Crusader Sterling Pensions',
+    'FCMB Pensions Limited',
+    'Guaranty Trust Pension Managers',
+    'Leadway Pensure PFA Limited',
+    'OAK Pensions Limited',
+    'Pension Alliance Limited (PAL)',
+    'Premium Pension Limited',
+    'Stanbic IBTC Pension',
+    'Tangerine APT Pensions',
+    'Trustfund Pensions Limited',
+    'Veritas Glanvills Pensions'
+]);

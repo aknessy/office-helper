@@ -143,7 +143,7 @@
                 $.ajax({
                     url : '<?=base_url('staff/fetch-staff')?>',
                     method : 'post',
-                    data : { query : searchTerm},
+                    data : {query : searchTerm},
                     success : function(res){
                         $('#searchResponseContainer').empty().append(res)
                         $(threadAction).addClass('hidden')
