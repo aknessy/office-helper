@@ -105,6 +105,9 @@
                                              <a href="#" class="btn btn-xs btn-outline text-sm btn-danger text-red-300">
                                                 <span class="text-xs">Trash</span>
                                              </a>
+                                             <a href="<?=base_url('staff/staff-view/' . $obj->uid)?>" class="btn btn-xs btn-outline text-sm btn-info text-blue-300">
+                                                <span class="text-xs">View</span>
+                                             </a>
                                         <?php
                                         }else{?>
 

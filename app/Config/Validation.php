@@ -402,5 +402,78 @@ class Validation extends BaseConfig
         ],
     ];
 
+    /**
+     * The following rules are used by the add staff service record method of the Staff Class
+     * Controller to add a record of service (promotion) for a staff
+     * 
+     * @array
+     */
+    public $add_prom_record = [
+        'rank' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'The new rank must be selected'
+            ]
+        ],
+        'effective_date_of_prom' => [
+            'rules' => 'trim|required|valid_date[Y-m-d]',
+            'errors' => [
+                'required' => 'Effective date for promotion is missing',
+                'valid_date' => 'Date is invalid'
+            ]
+        ],
+        'grade_level' => [
+            'rules' => 'trim|required|greater_than[0]',
+            'errors' => [
+                'required' => 'Grade level promoted to is required',
+                'greater_than' => 'Grade level must be greater than 0'
+            ]
+        ],
+        'step' => [
+            'rules' => 'trim|required|greater_than[0]',
+            'errors' => [
+                'required' => 'Step promoted to is required',
+                'greater_than' => 'Step must be greater than 0'
+            ]
+        ],
+        'type_of_promotion' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Type of promotion is required'
+            ]
+        ]
+    ];
+
+    public $add_posting_record = [
+        'effective_date' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Effective date of posting is required'
+            ]
+        ],
+        'state_of_posting' => [
+            'rules' => 'trim|required|integer|greater_than[0]',
+            'errors' => [
+                'required' => 'State of posting is required',
+                'integer' => 'State is invalid',
+                'greater_than[0]' => 'Lga is invalid'
+            ]
+        ],
+        'lga' => [
+            'rules' => 'trim|required|integer|greater_than[0]',
+            'errors' => [
+                'required' => 'Lga of posting is required',
+                'integer' => 'Lga is invalid',
+                'greater_than[0]' => 'Lga is invalid'
+            ]
+        ],
+        'remark' => [
+            'rules' => 'trim|required',
+            'errors' => [
+                'required' => 'Please add a remark'
+            ]
+        ]
+    ];
+
 
 }

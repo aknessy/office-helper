@@ -2,7 +2,7 @@
     <nav class="navbar justify-between w-full">
         <div class="hidden w-full max-w-sm lg:flex">
             <h3 class="w-full lg:w-1/2 flex items-center justify-start space-x-2">
-                <div class="btn btn-secondary rounded p-1 text-white">
+                <div class="btn btn-primary rounded p-1 text-white">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-office" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                         <path d="M4 18h9v-12l-5 2v5l-4 2v-8l9 -4l7 2v13l-7 3z"></path>
@@ -22,7 +22,7 @@
             </label> 
         </div> 
         <div class="flex-0">
-            <div class="btn btn-ghost hover:bg-secondary hover:text-white normal-case border-b-2 rounded-0 <?=$uri->getSegment(1) == 'home' || NULL == $uri->getSegment(1) ? 'border-b-blue-950' : ''?>">
+            <div class="btn btn-ghost hover:bg-primary hover:text-white normal-case border-b-2 rounded-0 <?=$uri->getSegment(1) == 'home' || NULL == $uri->getSegment(1) ? 'border-b-blue-600' : ''?>">
                 <a href="<?=base_url()?>" class="text-sm flex flex-row items-center justify-between space-x-1">  
                     <span>
                         <i data-feather="home"></i>
@@ -30,7 +30,7 @@
                     <span>Home</span>
                 </a>
             </div>
-            <div class="btn btn-ghost hover:bg-secondary hover:text-white normal-case border-b-2 rounded-0 <?=$uri->getSegment(1) == 'staff' ? 'border-b-blue-950' : ''?>">
+            <div class="btn btn-ghost hover:bg-primary hover:text-white normal-case border-b-2 rounded-0 <?=$uri->getSegment(1) == 'staff' ? 'border-b-blue-600' : ''?>">
                 <a href="<?=base_url('staff')?>" class="text-sm flex flex-row items-center justify-between space-x-1">
                     <span>
                         <i data-feather="users"></i>
@@ -38,7 +38,7 @@
                     <span>Staff</span>
                 </a>
             </div>
-            <div class="btn btn-ghost hover:bg-secondary hover:text-white normal-case border-b-2 rounded-0 <?=$uri->getSegment(1) == 'payslip' ? 'border-b-blue-950' : ''?>">
+            <div class="btn btn-ghost hover:bg-primary hover:text-white normal-case border-b-2 rounded-0 <?=$uri->getSegment(1) == 'payslip' ? 'border-b-blue-600' : ''?>">
                 <a href="<?=base_url('payslip')?>" class="text-sm flex flex-row items-center justify-between space-x-1">
                     <span>
                         <i data-feather="file-text"></i>
@@ -46,7 +46,7 @@
                     <span>Payslip</span>
                 </a>
             </div>
-            <div class="btn btn-ghost hover:bg-secondary hover:text-white normal-case border-b-2 rounded-0 <?=$uri->getSegment(1) == 'departments' ? 'border-b-blue-950' : ''?>">
+            <div class="btn btn-ghost hover:bg-primary hover:text-white normal-case border-b-2 rounded-0 <?=$uri->getSegment(1) == 'departments' ? 'border-b-blue-600' : ''?>">
                 <a href="#" class="text-sm flex flex-row items-center justify-between space-x-1">
                     <span>
                         <i data-feather="box"></i>
@@ -55,7 +55,7 @@
                 </a>
             </div>
             <div class="dropdown dropdown-end">
-                <div tabindex="0" class="btn normal-case bg-secondary hover:bg-blue-950 text-white rounded-md ">
+                <div tabindex="0" class="btn normal-case bg-primary hover:bg-blue-950 text-white rounded-md ">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather feather-download">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="7 10 12 15 17 10"></polyline>

@@ -12,6 +12,7 @@
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
         <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
         <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 
         <script>
@@ -84,6 +85,12 @@
 
                 document.body.innerHTML = originalContents;
             }
+        </script>
+
+        <script>
+            $(function(){
+                $('.select2').select2()
+            })
         </script>
 
     <?php 

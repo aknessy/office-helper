@@ -42,6 +42,12 @@ class Staff extends BaseController
     protected $states_lgas_model;
 
     /**
+     * Mirrors the Record of Service Model
+     * @Model
+     */
+    protected $record_of_service_model;
+
+    /**
      * Validates data
      * @Validation
      */
@@ -56,6 +62,8 @@ class Staff extends BaseController
         $this->staff_salary = new \App\Models\SalaryModel();
         $this->states_model = new \App\Models\StatesModel();
         $this->states_lgas_model = new \App\Models\StatesLgasModel();
+        $this->record_of_service_model = new \App\Models\RecordOfServiceModel();
+        
 
         $this->validation = \Config\Services::validation();
     }
@@ -186,7 +194,7 @@ class Staff extends BaseController
                     'cadre' => strtoupper($posts['cadre']),
                     'date_of_birth' => $posts['date_of_birth'],
                     'first_appt' => $posts['first_appt'],
-                    'confirmation' => $posts['confirmation'],
+                    'confirmation' => (NULL == $posts['confirmation'] ? NULL : $posts['confirmation']),
                     'state_of_origin' => $posts['state_of_origin'],
                     'lga_of_origin' => $posts['lga_of_origin'],
                     'phone' => $posts['phone'],
@@ -278,17 +286,52 @@ class Staff extends BaseController
 
     public function view_staff($uid)
     {
+        helper('form');
         helper('retirement_calc');
         
         $staff = $this->staff_model->findByUID($uid);
-
+        $promotions = $this->record_of_service_model->recordOfPromotion(intval($staff[0]->id));
+        $transfers = $this->record_of_service_model->recordOfTransfer(intval($staff[0]->id));
+       
         $data['rating'] = 92;
         $data['staff'] = $staff;
+
+        $data['promotion_record'] = $promotions[0]->record_of_prom;
+        $data['transfer_record'] = $transfers[0]->record_of_trans;
+
         $data['title'] = self::$page_title . 'View Staff';
+        $data['states'] = $this->states_model->getStates();
         $data['subview'] = 'staff/view';
         $data['uri'] = $this->uri;
 
         return view('layouts/main', $data);
+    }
+
+    public function add_service_record()
+    {
+        helper('form');
+
+        if($this->request->is('post'))
+        {
+            $posts = $this->request->getPost();
+            
+            if(!$this->validation->run($posts, 'add_prom_record')){
+                return redirect()->back()->withInput();
+            }else{
+                $record_is_for = $posts['record_for'];
+
+                if($record_is_for == 'promotion'){
+                    $create_record = $this->create_record_for_promotion($posts);
+                    if($create_record)
+                        session()->setFlashdata('flashSuccess', 'Staff promotional progress saved!');
+                    else
+                        session()->setFlashdata('flashError', 'Record for staff promotion could not be saved. Please try again!!');
+                }
+
+                return redirect()->back();
+            }
+        }else
+            return redirect()->back();
     }
 
     public function fetch_staff()
@@ -338,5 +381,85 @@ class Staff extends BaseController
             
             return $this->response->setJSON($states_lgas);
         }
+    }
+
+    private function create_record_for_promotion($data)
+    {
+        helper('rand_string');
+
+        if(!empty($data))
+        {
+            $rank = $data['rank'];
+            $effective_from = $data['effective_date_of_prom'];
+            $grade = $data['grade_level'];
+            $step = $data['step'];
+            $promotion_type = $data['type_of_promotion'];
+
+            $uid = $data['uid'];
+            $staff = $this->staff_model->findByUID($uid);
+            $record = NULL;
+
+            $record_of_promotion = [
+                'uid' => random_string('alnum', 5),
+                'rank' => $rank,
+                'grade' => $grade,
+                'step' => $step,
+                'effective_date' => $effective_from,
+                'type_of_promotion' => $promotion_type
+            ];
+
+            if($staff)
+            {   $staffID = $staff[0]->id;
+                $prev_prom_record = $this->record_of_service_model->recordOfPromotion($staffID)[0]->record_of_prom;
+                
+                $decode = json_decode($prev_prom_record);
+
+                if($prev_prom_record)
+                {                
+                    foreach($decode as $key){
+                        if($key->grade == $grade)
+                            return false;
+
+                        $effective_from_before = explode('-', $key->effective_date);
+                        $effective_from_now = explode('-', $effective_from);
+
+                        /**
+                         * Checking to see if there is a collision of effective promotion dates by comparing
+                         * years of previous promotional dates.
+                         */
+                        if($effective_from_before[0] == $effective_from_now[0])
+                            return false;
+                    }
+                    
+                    array_push($decode, $record_of_promotion);
+                    $record = json_encode($decode);
+                    
+                    $update_rec = [
+                        'record_of_prom' => $record,
+                        'updated_at' => date('Y-m-d H:i:s'),
+                        'updated_by' => 1
+                    ];
+                    
+                    $this->record_of_service_model->updateRecordOfService($staffID, $update_rec);
+
+                    return $this->record_of_service_model->affectedRows() > 0;
+                }else{
+                    $record = json_encode([$record_of_promotion]);
+
+                    $this->record_of_service_model->save(
+                        [
+                            'staff_id' => $staffID, 
+                            'record_of_prom' => $record,
+                            'record_created_by' => 1,
+                            'created_at' => date('Y-m-d H:i:s'),
+                        ]
+                    );
+
+                    return $this->record_of_service_model->insertID() > 0;
+                }
+            }
+        }
+
+        return false;
     }
 }

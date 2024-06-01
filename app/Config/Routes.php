@@ -54,6 +54,7 @@ $routes->post('/staff/fetch-staff', [\App\Controllers\Staff::class, 'fetch_staff
 $routes->post('/staff/fetch-lgas', [\App\Controllers\Staff::class, 'fetch_lgas']);
 $routes->post('/staff/add-record', [\App\Controllers\Staff::class, 'add']);
 $routes->post('/staff/add-image/(:any)', [\App\Controllers\Staff::class, 'add_image/$1']);
+$routes->post('/staff/service-record', [\App\Controllers\Staff::class, 'add_service_record']);
 /*
  * --------------------------------------------------------------------
  * Additional Routing
